@@ -1,0 +1,59 @@
+@import "variables";
+#app {
+  .el-menu--collapse .el-menu .el-submenu {
+    min-width: $sideBarWidth !important;
+  }
+}
+.sidebar-main-container{
+  .el-sub-menu{
+    overflow-x: hidden !important;
+    background: $subMenuBg !important;
+    color: $menuText !important;
+    .el-sub-menu__title{
+      color: $menuText !important;
+      &:hover{
+        background: $menuHover !important;
+      }
+    }
+  }
+  .el-menu--vertical {
+    &>.el-menu {
+      .svg-icon {
+        margin-right: 16px;
+      }
+    }
+    // 菜单样式
+    .nest-menu .el-submenu>.el-submenu__title,
+    .el-menu-item {
+      background: $subMenuBg;
+      color: $menuText;
+      //div{
+      //  margin-left: 10px;
+      //}
+      &:hover {
+        background-color: $menuHover !important;
+      }
+      &.is-active{
+        background-color: $menuHover !important;
+        color: $menuActiveText !important;
+      }
+    }
+    >.el-menu--popup {
+      max-height: 100vh;
+      overflow-y: auto;
+
+      &::-webkit-scrollbar-track-piece {
+        background: #d3dce6;
+      }
+
+      &::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: #99a9bf;
+        border-radius: 20px;
+      }
+    }
+  }
+}
