@@ -56,9 +56,9 @@
         :tree-config="{transform: true, rowField: 'menuId', parentField: 'parentId'}"
         :data="tableInfo.menuList">
       <vxe-column width="20px"></vxe-column>
-      <vxe-column field="menuName" title="菜单名称" tree-node min-width="120"></vxe-column>
-      <vxe-column field="orderNum" title="排序" min-width="120"></vxe-column>
-      <vxe-column field="component" title="组件路径" min-width="120">
+      <vxe-column field="menuName" min-width="160" title="菜单名称" tree-node></vxe-column>
+      <vxe-column field="orderNum" min-width="90" title="排序"></vxe-column>
+      <vxe-column field="component" min-width="180" title="组件路径">
         <template #default="{row}">
           <span>{{ row.component || '-' }}</span>
         </template>
@@ -293,17 +293,13 @@ const formInfo = reactive({
     ]
   },
 })
-
-let form = ref({
-  parentId: '',
-  menuType: 'M',
-  menuId: ''
-})
+// 表单信息
+let form = ref()
 
 /* 获取表格数据 */
 function fetchData() {
   tableInfo.loading = true;
-  listMenu(queryParams).then(res => {
+  listMenu(queryParams.value).then(res => {
     tableInfo.menuList = res.data
   }).finally(() => {
     tableInfo.loading = false
@@ -317,12 +313,13 @@ function handleQuery() {
 
 /** 重置按钮操作 */
 function resetQuery() {
-  // this.resetForm("queryForm");
+  queryParams.value = {}
   handleQuery();
 }
 
 /* 修改 */
 function handleUpdate(row) {
+  reset()
   formInfo.formTitle = '修改菜单'
   formInfo.formVisible = true
   getMenu(row.menuId).then(res => {
@@ -331,24 +328,31 @@ function handleUpdate(row) {
 }
 
 /* 添加 */
-function handleAdd() {
+function handleAdd(row) {
+  reset()
+  if (row != null && row.menuId) {
+    this.form.parentId = row.menuId;
+  } else {
+    this.form.parentId = ''
+  }
   formInfo.formTitle = '新增菜单'
   formInfo.formVisible = true
 }
 
 /* 删除 */
-function handleDelete() {
-  ElMessageBox.confirm('是否确认删除名称为"' + row.menuName + '"的数据项？').then(() => {
+function handleDelete(row) {
+  ElMessageBox.confirm('是否确认删除名称为"' + row.menuName + '"的数据项', '提示', {type: 'warning',}).then(() => {
     return delMenu(row.menuId);
   }).then(() => {
     fetchData()
     ElMessage.success("删除成功");
   }).catch(() => {
-  });
+  })
 }
 
 /* 弹窗保存提交 */
 const menuFormRef = ref(null)
+
 function handleSubmitForm() {
   menuFormRef.value.validate(valid => {
     if (valid) {
@@ -373,7 +377,7 @@ function getTreeSelect() {
   listMenu().then(res => {
     menuOptions.value = [];
     // const menu = {menuId: 0, menuName: '主类目', children: []};
-    const menu = {value: '0', label: '主类目', menuId: '0', menuName: '主类目', children: []};
+    const menu = {value: '', label: '主类目', menuId: '', menuName: '主类目', children: []};
     res.data.forEach(item => {
       item.value = item.menuId
       item.label = item.menuName
@@ -387,7 +391,7 @@ function getTreeSelect() {
 function reset() {
   form.value = {
     menuId: undefined,
-    parentId: 0,
+    parentId: '',
     menuName: undefined,
     icon: undefined,
     menuType: "M",
