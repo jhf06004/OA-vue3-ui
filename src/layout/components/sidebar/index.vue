@@ -39,9 +39,9 @@ const activeMenu = computed(() => {
   if (meta && meta.activeMenu) {
     return meta.activeMenu
   }
-  return path
-})
 
+  return path.replace(/^\//g, '')
+})
 // 状态管理中的路由
 const userRouterStore = usePermissionStore()
 const {routes: routesList, addRoutes, currentRoutes} = storeToRefs(userRouterStore)

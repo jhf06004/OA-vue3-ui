@@ -51,20 +51,6 @@ export const constantRoutes = [
                 name: 'UserMgmt',
                 component: () => import('@/views/systemMgmt/userMgmt/index.vue'),
                 meta: { title: '用户管理', icon: 'order' },
-                // children: [
-                //     {
-                //         path: '/staff',
-                //         name: 'StaffMgmt',
-                //         component: () => import('@/views/personnelMgmt/staffMgmt/index.vue'),
-                //         meta: { title: '员工管理',  icon: '' }
-                //     },
-                //     {
-                //         path: '/hr-mgmt',
-                //         name: 'HrMgmt',
-                //         component: () => import('@/views/personnelMgmt/hrMgmt/index.vue'),
-                //         meta: { title: '人事管理',  icon: '' }
-                //     }
-                // ]
             },
             {
                 path: '/role',
