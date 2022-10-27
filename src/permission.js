@@ -32,12 +32,10 @@ router.beforeEach(async (to, from, next) => {
             NProgress.done()
         } else {
             const hasGetUserRoles = userStore.getUserRoles
-            console.log('userStore.getUserRoles', userStore.getUserRoles)
             if (hasGetUserRoles.length) {
                 next()
             } else {
                 try {
-                    console.log("try-beforeEach")
                     // // 获取用户信息
                     await userStore.getInfo()
                     const permissionStore = usePermissionStore()
@@ -48,10 +46,8 @@ router.beforeEach(async (to, from, next) => {
                             router.addRoute(item) // 动态添加可访问路由表
                         })
                     }
-                    console.log('accessRoutes', accessRoutes)
                     next({...to, replace: true})
                 } catch (error) {
-                    // remove token and go to login page to re-login
                     // 退出登录以清除token
                     await userStore.logout()
                     ElMessage.error(error || 'Has Error')

@@ -29,7 +29,6 @@ const routes = ref([])
 const activeIndex = ref(null)
 // 处理顶部导航栏的路由问题
 function disposeRouter() {
-  console.log('show')
   const router = useRouter()
   console.log('permissionStore.getTopBarRouters',permissionStore.getTopBarRouters)
   routes.value = permissionStore.getTopBarRouters.filter((item) => {

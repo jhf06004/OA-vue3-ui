@@ -27,7 +27,6 @@ export const usePermissionStore = defineStore({
       return state.currentRoutes
     },
     getTopBarRouters(state) {
-      console.log('1222', state.topBarRouters)
       return state.topBarRouters
     },
     getSidebarRouters(state) {
