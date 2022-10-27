@@ -12,8 +12,8 @@
       </el-form-item>
       <el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.status" :clearable="true" class="form-item" placeholder="菜单状态">
-          <el-option label="开启" :value="0"/>
-          <el-option label="关闭" :value="1"/>
+          <el-option :value="0" label="显示"/>
+          <el-option :value="1" label="隐藏"/>
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -36,24 +36,15 @@
             type="info"
             plain
             :icon="SortUp"
-            @click="$refs.menuTableRef.setAllTreeExpand(true)"
-        >展开
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-            type="info"
-            plain
-            :icon="SortDown"
-            @click="$refs.menuTableRef.clearTreeExpand()"
-        >折叠
+            @click="spread"
+        >展开/折叠
         </el-button>
       </el-col>
     </el-row>
     <vxe-table
         ref="menuTableRef"
         :loading="tableInfo.loading"
-        :tree-config="{transform: true, rowField: 'menuId', parentField: 'parentId'}"
+        tree-config="{transform: true, expandAll: true, rowField: 'menuId', parentField: 'parentId'}"
         :data="tableInfo.menuList">
       <vxe-column width="20px"></vxe-column>
       <vxe-column field="menuName" min-width="160" title="菜单名称" tree-node></vxe-column>
@@ -63,24 +54,32 @@
           <span>{{ row.component || '-' }}</span>
         </template>
       </vxe-column>
-      <vxe-column field="status" title="状态" min-width="120"></vxe-column>
+      <vxe-column field="status" min-width="120" title="状态">
+        <template #default="{row}">
+          <el-tag v-if="row.status === '0'" type="success">显示</el-tag>
+          <el-tag v-if="row.status === '1'" type="danger">隐藏</el-tag>
+        </template>
+      </vxe-column>
       <vxe-column field="createdTime" title="创建时间" min-width="120"></vxe-column>
       <vxe-column title="操作" min-width="240" fixed="right">
         <template #default="{row}">
           <el-button
               link
+              type='primary'
               :icon="Edit"
               @click="handleUpdate(row)"
           >修改
           </el-button>
           <el-button
               link
+              type='primary'
               :icon="Plus"
               @click="handleAdd(row)"
           >新增
           </el-button>
           <el-button
               link
+              type='primary'
               :icon="Delete"
               @click="handleDelete(row)"
           >删除
@@ -404,6 +403,17 @@ function reset() {
   // this.resetForm("form");
 }
 
+// 表格配置项
+const menuTableRef = ref(null)
+const treeExpandRows = ref()
+
+function spread() {
+  const $table = menuTableRef.value
+  const treeExpandRows = $table.getTreeExpandRecords()
+  console.log(treeExpandRecords)
+}
+
+/* 设置展开行 */
 onMounted(() => {
   fetchData()
   getTreeSelect()

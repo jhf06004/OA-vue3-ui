@@ -49,7 +49,7 @@ watch(() => router.currentRoute.value.path, (newValue) => {
 function setSidebarRouter() {
   let currentRouterChildren = []
   // TODO
-  currentRouterChildren = routes.value[0].children
+  currentRouterChildren = routes?.value[0]?.children || []
   activeIndex.value = 0
   for (let i = 0; i < routes.value.length; i++) {
     // console.log(routes.value[i])
