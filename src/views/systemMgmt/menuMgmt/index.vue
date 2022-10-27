@@ -68,19 +68,19 @@
       <vxe-column title="操作" min-width="240" fixed="right">
         <template #default="{row}">
           <el-button
+              link
               :icon="Edit"
-              type="text"
               @click="handleUpdate(row)"
           >修改
           </el-button>
           <el-button
-              type="text"
+              link
               :icon="Plus"
               @click="handleAdd(row)"
           >新增
           </el-button>
           <el-button
-              type="text"
+              link
               :icon="Delete"
               @click="handleDelete(row)"
           >删除
@@ -331,9 +331,9 @@ function handleUpdate(row) {
 function handleAdd(row) {
   reset()
   if (row != null && row.menuId) {
-    this.form.parentId = row.menuId;
+    form.value.parentId = row.menuId;
   } else {
-    this.form.parentId = ''
+    form.value.parentId = '';
   }
   formInfo.formTitle = '新增菜单'
   formInfo.formVisible = true
