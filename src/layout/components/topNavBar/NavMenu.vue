@@ -16,11 +16,11 @@
 </template>
 
 <script setup>
-import {onMounted, ref, watch} from 'vue'
+import {ref, watch} from 'vue'
 import {usePermissionStore} from "@/store/permission.js";
-import router, {constantRoutes} from "@/router/index.js";
+import router from "@/router/index.js";
 import {useAppStore} from "@/store/app.js";
-import {useUserStore} from "@/store/user.js";
+import {useRouter} from "vue-router";
 
 const activePath = ref('')
 const permissionStore = usePermissionStore()
@@ -30,6 +30,7 @@ const activeIndex = ref(null)
 // 处理顶部导航栏的路由问题
 function disposeRouter() {
   console.log('show')
+  const router = useRouter()
   console.log('permissionStore.getTopBarRouters',permissionStore.getTopBarRouters)
   routes.value = permissionStore.getTopBarRouters.filter((item) => {
     if ((item.children && item.children.length > 0) || item.meta) {
@@ -48,10 +49,13 @@ watch(() => router.currentRoute.value.path, (newValue) => {
 // 设置侧边栏的路由，不显示第一级
 function setSidebarRouter() {
   let currentRouterChildren = []
+  // TODO
+  currentRouterChildren = routes.value[0].children
+  activeIndex.value = 0
   for (let i = 0; i < routes.value.length; i++) {
+    // console.log(routes.value[i])
     if (activePath.value === routes.value[i].children[0].path) {
       activeIndex.value = i
-      currentRouterChildren = routes.value[i].children
       break
     }
   }

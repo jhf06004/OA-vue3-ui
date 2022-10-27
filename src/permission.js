@@ -39,24 +39,17 @@ router.beforeEach(async (to, from, next) => {
                 try {
                     console.log("try-beforeEach")
                     // // 获取用户信息
-                    userStore.getInfo().then((res) => {
-                        const permissionStore = usePermissionStore()
-                        permissionStore.generateRoutes().then(accessRoutes => {
-                            // 根据roles权限生成可访问的路由表
-                            if (accessRoutes && accessRoutes.length) {
-                                accessRoutes.forEach(item => {
-                                    router.addRoute(item) // 动态添加可访问路由表
-                                })
-                            }
-                            next({path: '/'})
-                            // next({...to, replace: true}) // hack方法 确保addRoutes已完成
+                    await userStore.getInfo()
+                    const permissionStore = usePermissionStore()
+                    await permissionStore.generateRoutes()
+                    const accessRoutes = permissionStore.generateRoutes()
+                    if (accessRoutes && accessRoutes.length) {
+                        accessRoutes.forEach(item => {
+                            router.addRoute(item) // 动态添加可访问路由表
                         })
-                    }).catch(err => {
-                        userStore.logout().then(() => {
-                            ElMessage.error(err)
-                            next({path: '/'})
-                        })
-                    })
+                    }
+                    console.log('accessRoutes', accessRoutes)
+                    next({...to, replace: true})
                 } catch (error) {
                     // remove token and go to login page to re-login
                     // 退出登录以清除token

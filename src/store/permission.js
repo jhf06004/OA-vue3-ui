@@ -50,7 +50,11 @@ export const usePermissionStore = defineStore({
           const rewriteRoutes = filterAsyncRouter(rdata, false, true)
           const asyncRoutes = filterDynamicRoutes(dynamicRoutes);
           rewriteRoutes.push({path: '*', redirect: '/404', hidden: true})
-          router.addRoute(asyncRoutes || []);
+          if (asyncRoutes && asyncRoutes.length) {
+            asyncRoutes.forEach(asyncRoute => {
+              router.addRoute(asyncRoute);
+            })
+          }
           this.addRoutes = rewriteRoutes
           this.routes = constantRoutes.concat(rewriteRoutes)
           this.sidebarRouters = constantRoutes.concat(sidebarRoutes)
