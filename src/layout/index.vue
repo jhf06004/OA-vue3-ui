@@ -74,7 +74,7 @@ const hiddenSidebar = computed(() => {
 }
 
 .main {
-  overflow: hidden;
+  overflow-x: hidden;
   padding: 15px;
   margin: 0;
   height: $contentHeight;

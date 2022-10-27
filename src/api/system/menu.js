@@ -33,10 +33,27 @@ export function roleMenuTreeselect(roleId) {
   })
 }
 
+// // 新增菜单
+// export function addMenu(data) {
+//   return request({
+//     url: '/system/menu',
+//     method: 'post',
+//     data: data
+//   })
+// }
+
+// // 新增菜单
+// export function addMenu(data) {
+//   return request({
+//     url: '/system/menu',
+//     method: 'post',
+//     data: data
+//   })
+// }
 // 新增菜单
-export function addMenu(data) {
+export function saveMenu(data) {
   return request({
-    url: '/system/menu',
+    url: '/system/menu/save',
     method: 'post',
     data: data
   })
