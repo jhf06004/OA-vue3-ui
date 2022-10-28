@@ -81,7 +81,7 @@ service.interceptors.response.use(
     error => {
         console.log('err' + error) // for debug
         ElMessage({
-            message: error.msg,
+            message: error.msg || error,
             type: 'error',
             duration: 5 * 1000
         })

@@ -48,18 +48,18 @@ watch(() => router.currentRoute.value.path, (newValue) => {
 function setSidebarRouter() {
   let currentRouterChildren = []
   // TODO
-  currentRouterChildren = routes?.value[0].children
+  currentRouterChildren = routes?.value[0]?.children
   activeIndex.value = 0
   for (let i = 0; i < routes.value.length; i++) {
-    console.log(routes.value[i].children)
     if (activePath.value === routes.value[i].children[0].path) {
+      currentRouterChildren = routes.value[i].children
       activeIndex.value = i
       break
     }
   }
 
   // 设置侧边栏的路由---只有一个隐藏侧边栏
-  if (currentRouterChildren.length) {
+  if (currentRouterChildren?.length) {
     permissionStore.setCurrentRoutes(currentRouterChildren)
     appStore.setSidebarHidden(currentRouterChildren.length !== 1)
   }

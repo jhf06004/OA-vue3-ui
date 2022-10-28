@@ -318,7 +318,7 @@ const formInfo = reactive({
   },
 })
 // 表单信息
-let form = ref()
+let form = ref({})
 
 /* 获取表格数据 */
 function fetchData() {
