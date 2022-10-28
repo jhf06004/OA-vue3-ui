@@ -31,6 +31,6 @@ app
     .use(router)
     .use(IconPark)
     .use(VXETable)
-    .use(ElementPlus, {locale: zhCn,size:'default'})
+    .use(ElementPlus, {locale: zhCn})
     .component('svg-icon', svgIcon)
     .mount('#app')

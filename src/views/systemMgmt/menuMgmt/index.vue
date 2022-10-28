@@ -36,15 +36,24 @@
             type="info"
             plain
             :icon="SortUp"
-            @click="spread"
-        >展开/折叠
+            @click="$refs.menuTableRef.setAllTreeExpand(true)"
+        >展开
+        </el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+            :icon="SortDown"
+            plain
+            type="info"
+            @click="$refs.menuTableRef.clearTreeExpand()"
+        >折叠
         </el-button>
       </el-col>
     </el-row>
     <vxe-table
         ref="menuTableRef"
         :loading="tableInfo.loading"
-        tree-config="{transform: true, expandAll: true, rowField: 'menuId', parentField: 'parentId'}"
+        :tree-config="{transform: true, expandAll: false, rowField: 'menuId', parentField: 'parentId'}"
         :data="tableInfo.menuList">
       <vxe-column width="20px"></vxe-column>
       <vxe-column field="menuName" min-width="160" title="菜单名称" tree-node></vxe-column>
@@ -60,7 +69,7 @@
           <el-tag v-if="row.status === '1'" type="danger">隐藏</el-tag>
         </template>
       </vxe-column>
-      <vxe-column field="createdTime" title="创建时间" min-width="120"></vxe-column>
+      <vxe-column field="createdTime" min-width="160" title="创建时间"></vxe-column>
       <vxe-column title="操作" min-width="240" fixed="right">
         <template #default="{row}">
           <el-button
@@ -89,7 +98,7 @@
     </vxe-table>
 
     <!-- 添加或修改菜单对话框 -->
-    <el-dialog v-model="formInfo.formVisible" :title="formInfo.formTitle" append-to-body width="780px">
+    <el-dialog v-model="formInfo.formVisible" :title="formInfo.formTitle" append-to-body draggable width="780px">
       <el-form ref="menuFormRef" :model="form" :rules="formInfo.rules" style="padding: 0 40px">
         <el-row>
           <el-col :span="24">
@@ -252,7 +261,7 @@
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="handleSubmitForm">确 定</el-button>
+        <el-button :loading="formInfo.saveLoading" type="primary" @click="handleSubmitForm">确 定</el-button>
         <el-button @click="handleCancel">取 消</el-button>
       </div>
     </el-dialog>
@@ -300,6 +309,7 @@ function fetchData() {
   tableInfo.loading = true;
   listMenu(queryParams.value).then(res => {
     tableInfo.menuList = res.data
+    getTreeSelect()
   }).finally(() => {
     tableInfo.loading = false
   })
@@ -332,7 +342,7 @@ function handleAdd(row) {
   if (row != null && row.menuId) {
     form.value.parentId = row.menuId;
   } else {
-    form.value.parentId = '';
+    form.value.parentId = '0';
   }
   formInfo.formTitle = '新增菜单'
   formInfo.formVisible = true
@@ -355,10 +365,13 @@ const menuFormRef = ref(null)
 function handleSubmitForm() {
   menuFormRef.value.validate(valid => {
     if (valid) {
+      formInfo.saveLoading = true
       saveMenu(form.value).then(res => {
         ElMessage.success("操作成功")
         formInfo.formVisible = false;
         fetchData();
+      }).finally(() => {
+        formInfo.saveLoading = false
       })
     }
   })
@@ -376,7 +389,7 @@ function getTreeSelect() {
   listMenu().then(res => {
     menuOptions.value = [];
     // const menu = {menuId: 0, menuName: '主类目', children: []};
-    const menu = {value: '', label: '主类目', menuId: '', menuName: '主类目', children: []};
+    const menu = {value: '0', label: '主类目', menuId: '0', menuName: '主类目', children: []};
     res.data.forEach(item => {
       item.value = item.menuId
       item.label = item.menuName
@@ -390,7 +403,7 @@ function getTreeSelect() {
 function reset() {
   form.value = {
     menuId: undefined,
-    parentId: '',
+    parentId: '0',
     menuName: undefined,
     icon: undefined,
     menuType: "M",
@@ -405,18 +418,9 @@ function reset() {
 
 // 表格配置项
 const menuTableRef = ref(null)
-const treeExpandRows = ref()
 
-function spread() {
-  const $table = menuTableRef.value
-  const treeExpandRows = $table.getTreeExpandRecords()
-  console.log(treeExpandRecords)
-}
-
-/* 设置展开行 */
 onMounted(() => {
   fetchData()
-  getTreeSelect()
 })
 </script>
 

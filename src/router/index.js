@@ -63,8 +63,14 @@ export const constantRoutes = [
                 path: '/menu',
                 name: 'MenuMgmt',
                 component: () => import('@/views/systemMgmt/menuMgmt/index.vue'),
-                meta: { title: '菜单管理', icon: 'order' },
+                meta: {title: '菜单管理', icon: 'order'},
                 children: []
+            },
+            {
+                path: '/dept',
+                name: 'DeptMgmt',
+                component: () => import('@/views/systemMgmt/deptMgmt/index.vue'),
+                meta: {title: '部门管理', icon: 'order'},
             },
             {
                 path: '/job',
