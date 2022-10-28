@@ -1,6 +1,17 @@
 import request from '@/utils/request'
 // import { parseStrEmpty } from "@/utils/gitone";
 
+
+// 根据ID获取用户信息（无入参返回当前用户信息）
+// 查询用户列表
+export function getUserInfo(query) {
+  return request({
+    url: '/system/user/queryInfo',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询用户列表
 export function listUser(query) {
   return request({

@@ -50,7 +50,7 @@ router.beforeEach(async (to, from, next) => {
                 } catch (error) {
                     // 退出登录以清除token
                     await userStore.logout()
-                    ElMessage.error(error || 'Has Error')
+                    // ElMessage.error(error || 'Has Error')
                     next(`/login?redirect=${to.path}`)
                     NProgress.done()
                 }

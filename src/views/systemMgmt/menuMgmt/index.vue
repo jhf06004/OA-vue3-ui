@@ -10,10 +10,9 @@
             class="form-item"
         />
       </el-form-item>
-      <el-form-item label="状态" prop="status">
+      <el-form-item label="菜单状态" prop="status">
         <el-select v-model="queryParams.status" :clearable="true" class="form-item" placeholder="菜单状态">
-          <el-option :value="0" label="显示"/>
-          <el-option :value="1" label="隐藏"/>
+          <el-option v-for="(item,key) in menuStatus" :key="key" :label="item.label" :value="key"/>
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -63,10 +62,18 @@
           <span>{{ row.component || '-' }}</span>
         </template>
       </vxe-column>
-      <vxe-column field="status" min-width="120" title="状态">
+      <vxe-column field="visible" min-width="120" title="显示状态">
         <template #default="{row}">
-          <el-tag v-if="row.status === '0'" type="success">显示</el-tag>
-          <el-tag v-if="row.status === '1'" type="danger">隐藏</el-tag>
+          <el-tag :type="menuVisible[row.status].type">
+            {{ menuVisible[row.status].label }}
+          </el-tag>
+        </template>
+      </vxe-column>
+      <vxe-column field="status" min-width="120" title="菜单状态">
+        <template #default="{row}">
+          <el-tag :type="menuStatus[row.status].type">
+            {{ menuStatus[row.status].label }}
+          </el-tag>
         </template>
       </vxe-column>
       <vxe-column field="createdTime" min-width="160" title="创建时间"></vxe-column>
@@ -234,8 +241,7 @@
                 <!--                    :key="dict.value"-->
                 <!--                    :label="dict.value"-->
                 <!--                >{{dict.label}}</el-radio>-->
-                <el-radio label="0">显示</el-radio>
-                <el-radio label="1">隐藏</el-radio>
+                <el-radio v-for="(item,key) in menuVisible" :key="key" :label="key">{{ item.label }}</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -253,8 +259,7 @@
                 <!--                    :key="dict.value"-->
                 <!--                    :label="dict.value"-->
                 <!--                >{{dict.label}}</el-radio>-->
-                <el-radio label="0">正常</el-radio>
-                <el-radio label="1">停用</el-radio>
+                <el-radio v-for="(item,key) in menuStatus" :key="key" :label="key">{{ item.label }}</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -283,6 +288,17 @@ const tableInfo = reactive({
   menuList: [],
   loading: false
 })
+
+// 菜单显示
+const menuVisible = {
+  '1': {label: '停用', type: 'danger'},
+  '0': {label: '正常', type: 'success'},
+}
+// 菜单状态
+const menuStatus = {
+  '1': {label: '停用', type: 'danger'},
+  '0': {label: '正常', type: 'success'},
+}
 // 弹窗信息
 const formInfo = reactive({
   formTitle: '',

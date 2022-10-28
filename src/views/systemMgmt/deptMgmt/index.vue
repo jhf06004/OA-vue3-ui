@@ -12,8 +12,7 @@
       </el-form-item>
       <el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.status" :clearable="true" class="form-item" placeholder="部门状态">
-          <el-option :value="0" label="正常"/>
-          <el-option :value="1" label="停用"/>
+          <el-option v-for="(item,key) in deptStatus" :key="key" :label="item.label" :value="key"/>
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -60,8 +59,9 @@
       <vxe-column field="orderNum" min-width="90" title="排序"></vxe-column>
       <vxe-column field="status" min-width="120" title="状态">
         <template #default="{row}">
-          <el-tag v-if="row.status === '0'" type="success">显示</el-tag>
-          <el-tag v-if="row.status === '1'" type="danger">隐藏</el-tag>
+          <el-tag :type="deptStatus[row.status].type">
+            {{ deptStatus[row.status].label }}
+          </el-tag>
         </template>
       </vxe-column>
       <vxe-column field="createdTime" min-width="160" title="创建时间"></vxe-column>
@@ -140,8 +140,7 @@
           <el-col :span="12">
             <el-form-item label="部门状态">
               <el-radio-group v-model="form.status" class="form-item">
-                <el-radio label="0">正常</el-radio>
-                <el-radio label="1">停用</el-radio>
+                <el-radio v-for="(item,key) in deptStatus" :key="key" :label="key">{{ item.label }}</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -164,6 +163,11 @@ import {ElMessage, ElMessageBox} from "element-plus";
 import {addDept, delDept, getDept, listDept, listDeptExcludeChild, updateDept} from "@/api/system/dept.js";
 // 查修参数
 const queryParams = ref({})
+// 部门状态
+const deptStatus = {
+  '1': {label: '停用', type: 'danger'},
+  '0': {label: '正常', type: 'success'},
+}
 // 表格信息
 const tableInfo = reactive({
   deptList: [],

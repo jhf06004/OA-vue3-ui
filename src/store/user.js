@@ -2,6 +2,7 @@ import {login, logout, getInfo,refreshToken} from '@/api/user'
 import {getToken, setToken, removeToken, setExpiresIn} from '@/utils/auth'
 // 密码加密
 import {encrypt} from '@/utils/jsencrypt'
+import companyLogo from '@/assets/images/avatar@2x.png'
 // 重置路由
 import {resetRouter} from '@/router'
 import {defineStore} from "pinia";
@@ -60,16 +61,18 @@ export const useUserStore = defineStore({
         // 获取用户信息
         getInfo() {
             return new Promise((resolve, reject) => {
-                getInfo().then(result => {
+                getInfo({userId: ''}).then(result => {
                     const res = result.data
-                    const user = res.user
-                    const avatar = !user.avatar ? require("@/assets/images/companylogo.png") : user.avatar;
+                    // const user = res.user
+                    const user = res
+                    const avatar = !user.avatar ? companyLogo : user.avatar;
                     if (res.roles && res.roles.length > 0) { // 验证返回的roles是否是一个非空数组
                         this.roles = res.roles
                         this.permissions = res.permissions
                     } else {
                         this.roles = ['ROLE_DEFAULT']
                     }
+                    // this.name = user.userName
                     this.name = user.userName
                     this.avatar = avatar
                     resolve(res)

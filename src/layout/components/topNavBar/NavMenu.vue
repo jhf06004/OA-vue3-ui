@@ -30,7 +30,6 @@ const activeIndex = ref(null)
 // 处理顶部导航栏的路由问题
 function disposeRouter() {
   const router = useRouter()
-  console.log('permissionStore.getTopBarRouters',permissionStore.getTopBarRouters)
   routes.value = permissionStore.getTopBarRouters.filter((item) => {
     if ((item.children && item.children.length > 0) || item.meta) {
       return item
@@ -49,10 +48,10 @@ watch(() => router.currentRoute.value.path, (newValue) => {
 function setSidebarRouter() {
   let currentRouterChildren = []
   // TODO
-  currentRouterChildren = routes?.value[0]?.children || []
+  currentRouterChildren = routes?.value[0].children
   activeIndex.value = 0
   for (let i = 0; i < routes.value.length; i++) {
-    // console.log(routes.value[i])
+    console.log(routes.value[i].children)
     if (activePath.value === routes.value[i].children[0].path) {
       activeIndex.value = i
       break

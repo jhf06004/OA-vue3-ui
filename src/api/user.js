@@ -32,10 +32,12 @@ export function refreshToken() {
 }
 
 // 获取用户详细信息
-export function getInfo() {
+export function getInfo(params) {
   return request({
-    url: '/system/user/getInfo',
-    method: 'get'
+    // url: '/system/user/getInfo',
+    url: '/system/user/queryInfo',
+    method: 'get',
+    params
   })
 }
 
@@ -66,3 +68,4 @@ export function getPublicKey() {
     method: 'get'
   })
 }
+
