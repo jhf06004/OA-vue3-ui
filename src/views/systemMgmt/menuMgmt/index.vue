@@ -57,7 +57,7 @@
       <vxe-column width="20px"></vxe-column>
       <vxe-column field="menuName" min-width="160" title="菜单名称" tree-node></vxe-column>
       <vxe-column field="orderNum" min-width="90" title="排序"></vxe-column>
-      <vxe-column field="component" min-width="180" title="组件路径">
+      <vxe-column field="component" min-width="200" title="组件路径">
         <template #default="{row}">
           <span>{{ row.component || '-' }}</span>
         </template>
@@ -291,8 +291,8 @@ const tableInfo = reactive({
 
 // 菜单显示
 const menuVisible = {
-  '1': {label: '停用', type: 'danger'},
-  '0': {label: '正常', type: 'success'},
+  '1': {label: '隐藏', type: 'danger'},
+  '0': {label: '显示', type: 'success'},
 }
 // 菜单状态
 const menuStatus = {
