@@ -26,9 +26,9 @@ export function getDept(deptId) {
 }
 
 // 查询部门下拉树结构
-export function treeselect() {
+export function treeSelect() {
   return request({
-    url: '/system/dept/treeselect',
+    url: '/system/dept/treeSelect',
     method: 'get'
   })
 }
@@ -42,22 +42,31 @@ export function roleDeptTreeselect(roleId) {
 }
 
 // 新增部门
-export function addDept(data) {
+export function saveDept(data) {
   return request({
-    url: '/system/dept',
+    url: '/system/dept/save',
     method: 'post',
-    data: data
+    data
   })
 }
 
-// 修改部门
-export function updateDept(data) {
-  return request({
-    url: '/system/dept',
-    method: 'put',
-    data: data
-  })
-}
+// // 新增部门
+// export function addDept(data) {
+//   return request({
+//     url: '/system/dept',
+//     method: 'post',
+//     data: data
+//   })
+// }
+//
+// // 修改部门
+// export function updateDept(data) {
+//   return request({
+//     url: '/system/dept',
+//     method: 'put',
+//     data: data
+//   })
+// }
 
 // 删除部门
 export function delDept(deptId) {

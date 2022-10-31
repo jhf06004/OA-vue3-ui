@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="page-container">
     <el-form ref="queryForm" :inline="true" :model="queryParams">
       <el-form-item label="部门名称" prop="menuName">
         <el-input
@@ -160,7 +160,7 @@ import {delMenu, listMenu} from "@/api/system/menu.js";
 import {SortDown, SortUp, Search, Refresh, Delete, Edit, Plus, Sort, QuestionFilled} from '@element-plus/icons-vue'
 import {handleTree} from "@/utils/gitone.js";
 import {ElMessage, ElMessageBox} from "element-plus";
-import {addDept, delDept, getDept, listDept, listDeptExcludeChild, updateDept} from "@/api/system/dept.js";
+import {delDept, getDept, listDept, saveDept} from "@/api/system/dept.js";
 // 查修参数
 const queryParams = ref({})
 // 部门状态
@@ -248,7 +248,7 @@ function handleAdd(row) {
   if (row && row.deptId) {
     form.value.parentId = row.deptId;
   } else {
-    form.value.parentId = '0'
+    form.value.parentId = ''
   }
   formInfo.formTitle = '新增部门'
   formInfo.formVisible = true
@@ -272,23 +272,13 @@ function handleSubmitForm() {
   deptFormRef.value.validate(valid => {
     if (valid) {
       formInfo.saveLoading = true
-      if (form.value.deptId) {
-        updateDept(form.value).then(() => {
-          ElMessage.success("新增成功")
-          formInfo.formVisible = false;
-          fetchData()
-        }).finally(() => {
-          formInfo.saveLoading = false
-        })
-      } else {
-        addDept(form.value).then(() => {
-          ElMessage.success("操作成功")
-          formInfo.formVisible = false;
-          fetchData()
-        }).finally(() => {
-          formInfo.saveLoading = false
-        })
-      }
+      saveDept(form.value).then(() => {
+        ElMessage.success("操作成功")
+        formInfo.formVisible = false;
+        fetchData()
+      }).finally(() => {
+        formInfo.saveLoading = false
+      })
     }
   })
 }
@@ -310,15 +300,13 @@ function getTreeSelect() {
       item.label = item.deptName
     })
     deptOptions.value = handleTree(res.data, "deptId");
-    deptOptions.value.unshift({value: '0', label: '-', deptId: '0', deptName: '-', children: []})
+    // deptOptions.value.unshift({value: '0', label: '-', deptId: '0', deptName: '-', children: []})
   });
 }
 
 // 表单重置
 function reset() {
-  form.value = {
-    parentId: '0',
-  }
+  form.value = {}
   // this.resetForm("form");
 }
 

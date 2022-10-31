@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="page-container">
     <el-form ref="queryForm" :inline="true" :model="queryParams">
       <el-form-item label="岗位编码" prop="postCode">
         <el-input

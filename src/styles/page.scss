@@ -1,10 +1,16 @@
-.page-container{
+@import "variables.scss";
+// 路由主体内容的高度
+.page-container {
   background: #fff;
   border-radius: 5px;
   padding: 20px;
+  // 计算方式 ： 100vh - 顶部导航高度 - 当前路由名称栏的高度 - 上下外边距
+  min-height: calc(100vh - $topBarHeight - $topRouterNameBarHeight - 40px);
+
 }
-table{
-  .i-icon-play{
+
+table {
+  .i-icon-play {
     margin-right: 5px;
   }
 }

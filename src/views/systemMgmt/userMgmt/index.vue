@@ -1,38 +1,120 @@
 <template>
   <div class="page-container">
-    <vxe-table
-        align="center"
-        :data="tableData">
-      <vxe-column type="seq" width="60"></vxe-column>
-      <vxe-column field="name" title="Name"></vxe-column>
-      <vxe-column field="sex" title="Sex"></vxe-column>
-      <vxe-column field="age" title="Age"></vxe-column>
-    </vxe-table>
-
+    <div class="dept-container">
+      <div class="left-tree">
+        <el-input v-model="filterText" placeholder="请输入部门名称关键字"/>
+        <el-tree ref="deptTreeRef" :data="deptTreeInfo.DeptData" :filter-node-method="filterNode" :props="defaultProps"
+                 @node-click="handleDeptNodeClick"/>
+      </div>
+      <div class="right-info">
+        表格
+      </div>
+    </div>
+    <div class="dept-container">
+      <div class="left-tree">
+        <el-input v-model="filterText" placeholder="请输入部门名称关键字"/>
+        <el-tree ref="deptTreeRef" :data="deptTreeInfo.DeptData" :filter-node-method="filterNode" :props="defaultProps"
+                 @node-click="handleDeptNodeClick"/>
+      </div>
+      <div class="right-info">
+        表格
+      </div>
+    </div>
+    <div class="dept-container">
+      <div class="left-tree">
+        <el-input v-model="filterText" placeholder="请输入部门名称关键字"/>
+        <el-tree ref="deptTreeRef" :data="deptTreeInfo.DeptData" :filter-node-method="filterNode" :props="defaultProps"
+                 @node-click="handleDeptNodeClick"/>
+      </div>
+      <div class="right-info">
+        表格
+      </div>
+    </div>
+    <div class="dept-container">
+      <div class="left-tree">
+        <el-input v-model="filterText" placeholder="请输入部门名称关键字"/>
+        <el-tree ref="deptTreeRef" :data="deptTreeInfo.DeptData" :filter-node-method="filterNode" :props="defaultProps"
+                 @node-click="handleDeptNodeClick"/>
+      </div>
+      <div class="right-info">
+        表格
+      </div>
+    </div>
+    <div class="dept-container">
+      <div class="left-tree">
+        <el-input v-model="filterText" placeholder="请输入部门名称关键字"/>
+        <el-tree ref="deptTreeRef" :data="deptTreeInfo.DeptData" :filter-node-method="filterNode" :props="defaultProps"
+                 @node-click="handleDeptNodeClick"/>
+      </div>
+      <div class="right-info">
+        表格
+      </div>
+    </div>
+    <div class="dept-container">
+      <div class="left-tree">
+        <el-input v-model="filterText" placeholder="请输入部门名称关键字"/>
+        <el-tree ref="deptTreeRef" :data="deptTreeInfo.DeptData" :filter-node-method="filterNode" :props="defaultProps"
+                 @node-click="handleDeptNodeClick"/>
+      </div>
+      <div class="right-info">
+        表格
+      </div>
+    </div>
   </div>
 </template>
 
-<script>
-import { defineComponent, ref } from 'vue'
+<script setup>
+import {onMounted, reactive, watch, ref} from "vue";
+import {treeSelect} from "@/api/system/dept.js";
 
-export default defineComponent({
-  setup () {
-    const allAlign = ref(null)
+const defaultProps = {
+  children: 'children',
+  label: 'label',
+}
+const deptTreeInfo = reactive({
+  DeptData: '',
+  // 选中的部门id
+  checkedDeptId: ''
+})
+// 输入框搜索过滤
+const deptTreeRef = ref(null)
+const filterText = ref('')
+watch(filterText, (val) => {
+  deptTreeRef.value.filter(val)
+})
+const filterNode = (value, data) => {
+  if (!value) return true
+  return data.label.includes(value)
+}
 
-    const tableData = ref([
-      { id: 10001, name: 'Test1', role: 'Develop', sex: 'Man', age: 28, address: 'test abc' },
-      { id: 10002, name: 'Test2', role: 'Test', sex: 'Women', age: 22, address: 'Guangzhou' },
-      { id: 10003, name: 'Test3', role: 'PM', sex: 'Man', age: 32, address: 'Shanghai' },
-      { id: 10004, name: 'Test4', role: 'Designer', sex: 'Women', age: 24, address: 'Shanghai' }
-    ])
+// 获取部门的树形结构
+function getDeptTreeData() {
+  treeSelect().then(res => {
+    deptTreeInfo.DeptData = res.data
+  })
+}
 
-    return {
-      allAlign,
-      tableData
-    }
-  }
+// 左侧树形结构
+function handleDeptNodeClick(deptNode) {
+  console.log(deptNode)
+  deptTreeInfo.checkedDeptId = deptNode.id
+}
+
+onMounted(() => {
+  getDeptTreeData()
 })
 </script>
 
 <style scoped lang="scss">
+.dept-container {
+  display: flex;
+
+  .left-tree {
+    margin-right: 20px;
+    width: 240px;
+  }
+
+  .right-info {
+  }
+}
 </style>

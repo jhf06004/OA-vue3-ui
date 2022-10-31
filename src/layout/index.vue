@@ -13,7 +13,10 @@
         </el-aside>
         <!--  主题信息  -->
         <el-main class="main">
-          <AppMain/>
+          <RouterNameBar class="router-name-bar"/>
+          <div class="app-main">
+            <AppMain/>
+          </div>
         </el-main>
       </el-container>
     </el-container>
@@ -23,6 +26,7 @@
 import TopNavBar from "@/layout/components/topNavBar/index.vue";
 import AppMain from "@/layout/components/AppMain.vue";
 import Sidebar from "@/layout/components/sidebar/index.vue";
+import RouterNameBar from "@/layout/components/RouterNameBar.vue";
 import {useAppStore} from "@/store/app.js";
 import {computed, ref} from "vue";
 
@@ -74,11 +78,25 @@ const hiddenSidebar = computed(() => {
 }
 
 .main {
+  position: relative;
   overflow-x: hidden;
-  padding: 15px;
+  padding: 0;
   margin: 0;
   height: $contentHeight;
   background: #eff3f9;
+}
+
+.router-name-bar {
+  width: 100%;
+  position: fixed;
+  top: $topBarHeight;
+  z-index: 200;
+  border-bottom: 1px solid #eee;
+}
+
+.app-main {
+  margin-top: $topRouterNameBarHeight;
+  padding: 20px;
 }
 
 .hidden-sidebar {

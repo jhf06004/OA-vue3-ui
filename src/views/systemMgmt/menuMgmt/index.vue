@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="page-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true">
       <el-form-item label="菜单名称" prop="menuName">
         <el-input

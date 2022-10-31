@@ -7,11 +7,14 @@ $menuBg: #1c263d;
 $menuHover: #2986f2;
 
 $subMenuBg: #1c263d;
-$subMenuHover:  #2986f2;
+$subMenuHover: #2986f2;
 
 $sideBarWidth: 190px;
 $topBarHeight: 64px;
 $contentHeight: calc(100vh - $topBarHeight);
+
+// 顶部路由名称的高度
+$topRouterNameBarHeight: 50px;
 
 // the :export directive is the magic sauce for webpack
 :export {
@@ -23,4 +26,5 @@ $contentHeight: calc(100vh - $topBarHeight);
   subMenuBg: $subMenuBg;
   subMenuHover: $subMenuHover;
   sideBarWidth: $sideBarWidth;
+  topRouterNameBarHeight: $topRouterNameBarHeight;
 }
