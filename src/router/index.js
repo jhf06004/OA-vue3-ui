@@ -20,23 +20,23 @@ export const constantRoutes = [
         component: () => import('@/views/login/index.vue')
     },
     {
-        path: '/personnel-mgmt',
+        path: '/personnel',
         component: Layout,
         name: 'PersonnelMgmt',
         redirect: '/staff',
-        meta: { title: '人事管理', icon: 'order' },
+        meta: {title: '人事管理', icon: 'order'},
         children: [
             {
                 path: '/staff',
                 name: 'StaffMgmt',
                 component: () => import('@/views/personnelMgmt/staffMgmt/index.vue'),
-                meta: { title: '员工管理',  icon: 'order' }
+                meta: {title: '员工管理', icon: 'order'}
             },
             {
-                path: '/hr-mgmt',
+                path: '/hr',
                 name: 'HrMgmt',
                 component: () => import('@/views/personnelMgmt/hrMgmt/index.vue'),
-                meta: { title: '人事管理',  icon: 'order' }
+                meta: {title: '人事管理', icon: 'order'}
             }
         ]
     },
@@ -46,12 +46,6 @@ export const constantRoutes = [
         name: 'SystemMgmt',
         meta: { title: '系统管理', icon: 'order' },
         children: [
-            {
-                path: '/user',
-                name: 'UserMgmt',
-                component: () => import('@/views/systemMgmt/userMgmt/index.vue'),
-                meta: { title: '用户管理', icon: 'order' },
-            },
             {
                 path: '/role',
                 name: 'RoleMgmt',
@@ -83,6 +77,12 @@ export const constantRoutes = [
                 name: 'DictMgmt',
                 component: () => import('@/views/systemMgmt/dictMgmt/index.vue'),
                 meta: {title: '字典管理', icon: 'order'},
+            },
+            {
+                path: '/user',
+                name: 'UserMgmt',
+                component: () => import('@/views/systemMgmt/userMgmt/index.vue'),
+                meta: {title: '用户管理', icon: 'order'},
             }
         ]
     },
