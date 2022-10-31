@@ -6,7 +6,6 @@
   padding: 20px;
   // 计算方式 ： 100vh - 顶部导航高度 - 当前路由名称栏的高度 - 上下外边距
   min-height: calc(100vh - $topBarHeight - $topRouterNameBarHeight - 40px);
-
 }
 
 table {
@@ -30,4 +29,29 @@ table {
   //background: #fff;
   display: flex;
   justify-content: right;
+}
+
+/* 搜索输入框的宽度 */
+.search-item {
+  width: 220px;
+}
+
+// 修改滚动条样式--y轴
+::-webkit-scrollbar {
+  /*滚动条整体样式*/
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  /*滚动条里面小方块*/
+  border-radius: 10px;
+  background-color: rgba(166, 179, 189, 0.5);
+}
+
+::-webkit-scrollbar-track {
+  /*滚动条里面轨道*/
+  //box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.15);
+  background: #ededed;
+  border-radius: 10px;
 }

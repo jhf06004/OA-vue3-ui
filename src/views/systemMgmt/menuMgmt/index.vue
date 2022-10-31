@@ -51,6 +51,9 @@
     </el-row>
     <vxe-table
         ref="menuTableRef"
+        :header-cell-style="{ background: '#fafafa' }"
+        border="inner"
+        stripe
         :loading="tableInfo.loading"
         :tree-config="{transform: true, expandAll: false, rowField: 'menuId', parentField: 'parentId'}"
         :data="tableInfo.menuList">

@@ -40,6 +40,9 @@
     </el-row>
     <vxe-table
         ref="jobTableRef"
+        :header-cell-style="{ background: '#fafafa' }"
+        border="inner"
+        stripe
         :data="tableInfo.jobList"
         :loading="tableInfo.loading">
       <vxe-column width="20px"></vxe-column>

@@ -51,6 +51,9 @@
     </el-row>
     <vxe-table
         ref="deptTableRef"
+        :header-cell-style="{ background: '#fafafa' }"
+        border="inner"
+        stripe
         :data="tableInfo.deptList"
         :loading="tableInfo.loading"
         :tree-config="{transform: true, expandAll: true, rowField: 'deptId', parentField: 'parentId'}">
