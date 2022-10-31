@@ -271,18 +271,23 @@ const deptFormRef = ref(null)
 function handleSubmitForm() {
   deptFormRef.value.validate(valid => {
     if (valid) {
+      formInfo.saveLoading = true
       if (form.value.deptId) {
         updateDept(form.value).then(() => {
           ElMessage.success("新增成功")
           formInfo.formVisible = false;
-          fetchData();
+          fetchData()
+        }).finally(() => {
+          formInfo.saveLoading = false
         })
       } else {
         addDept(form.value).then(() => {
           ElMessage.success("操作成功")
           formInfo.formVisible = false;
-          fetchData();
-        });
+          fetchData()
+        }).finally(() => {
+          formInfo.saveLoading = false
+        })
       }
     }
   })

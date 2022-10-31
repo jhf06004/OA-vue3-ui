@@ -83,11 +83,25 @@
       />
     </div>
     <!-- 添加或修改岗位对话框 -->
-    <el-dialog v-model="formInfo.formVisible" :title="formInfo.formTitle" append-to-body draggable width="780px">
-      <el-form ref="jobFormRef" :model="form" :rules="formInfo.rules" style="padding: 0 40px">
-        <el-row>
-
-        </el-row>
+    <el-dialog v-model="formInfo.formVisible" :title="formInfo.formTitle" append-to-body draggable width="480px">
+      <el-form ref="jobFormRef" :model="form" :rules="formInfo.rules" label-width="100px">
+        <el-form-item label="岗位名称" prop="postName">
+          <el-input v-model="form.postName" class="form-item" placeholder="请输入岗位名称"/>
+        </el-form-item>
+        <el-form-item label="岗位编码" prop="postCode">
+          <el-input v-model="form.postCode" class="form-item" placeholder="请输入编码名称"/>
+        </el-form-item>
+        <el-form-item label="岗位顺序" prop="postSort">
+          <el-input-number v-model="form.postSort" :min="0" class="form-item" controls-position="right"/>
+        </el-form-item>
+        <el-form-item label="岗位状态" prop="status">
+          <el-radio-group v-model="form.status">
+            <el-radio v-for="(item,key) in jobStatus" :key="key" :label="key">{{ item.label }}</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="form.remark" class="form-item" placeholder="请输入内容" type="textarea"/>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button :loading="formInfo.saveLoading" type="primary" @click="handleSubmitForm">确 定</el-button>
@@ -103,7 +117,7 @@ import {Search, Refresh, Delete, Edit, Plus} from '@element-plus/icons-vue'
 import {getMenu, saveMenu, delMenu} from "@/api/system/menu.js";
 import Pagination from '@/components/Pagination/index.vue'
 import {ElMessage, ElMessageBox} from "element-plus";
-import {delPost, getPost, listPost} from "@/api/system/post.js";
+import {addPost, delPost, getPost, listPost, updatePost} from "@/api/system/post.js";
 // 查修参数
 const queryParams = ref({
   pageNum: 1,
@@ -127,7 +141,18 @@ const formInfo = reactive({
   formVisible: false,
   // 保存时的加载
   saveLoading: false,
-  rules: {},
+  // 表单校验
+  rules: {
+    postName: [
+      {required: true, message: "岗位名称不能为空", trigger: "blur"}
+    ],
+    postCode: [
+      {required: true, message: "岗位编码不能为空", trigger: "blur"}
+    ],
+    postSort: [
+      {required: true, message: "岗位顺序不能为空", trigger: "blur"}
+    ]
+  }
 })
 // 表单信息
 let form = ref({})
@@ -135,7 +160,6 @@ let form = ref({})
 /* 获取表格数据 */
 function fetchData() {
   tableInfo.loading = true;
-  console.log(queryParams.value)
   listPost(queryParams.value).then(res => {
     tableInfo.jobList = res.rows
     tableInfo.total = res.total
@@ -182,8 +206,8 @@ function handleAdd(row) {
 
 /* 删除 */
 function handleDelete(row) {
-  ElMessageBox.confirm('是否确认删除名称为"' + row.menuName + '"的数据项', '提示', {type: 'warning',}).then(() => {
-    return delPost(row.postIds);
+  ElMessageBox.confirm('是否确认删除名称为"' + row.postName + '"的岗位', '提示', {type: 'warning',}).then(() => {
+    return delPost(row.postId);
   }).then(() => {
     fetchData()
     ElMessage.success("删除成功");
@@ -198,13 +222,23 @@ function handleSubmitForm() {
   jobFormRef.value.validate(valid => {
     if (valid) {
       formInfo.saveLoading = true
-      saveMenu(form.value).then(res => {
-        ElMessage.success("操作成功")
-        formInfo.formVisible = false;
-        fetchData();
-      }).finally(() => {
-        formInfo.saveLoading = false
-      })
+      if (form.value.postId !== undefined) {
+        updatePost(form.value).then(() => {
+          ElMessage.success("修改成功")
+          formInfo.formVisible = false
+          fetchData()
+        }).finally(() => {
+          formInfo.saveLoading = false
+        })
+      } else {
+        addPost(form.value).then(() => {
+          ElMessage.success("新增成功")
+          formInfo.formVisible = false;
+          fetchData();
+        }).finally(() => {
+          formInfo.saveLoading = false
+        })
+      }
     }
   })
 }
@@ -216,7 +250,9 @@ function handleCancel() {
 
 // 表单重置
 function reset() {
-  form.value = {};
+  form.value = {
+    status: '0'
+  };
   // this.resetForm("form");
 }
 
@@ -231,7 +267,7 @@ onMounted(() => {
 }
 
 .form-item {
-  width: 220px;
+  width: 300px;
 }
 
 </style>
