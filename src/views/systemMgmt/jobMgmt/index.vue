@@ -7,6 +7,7 @@
             clearable
             placeholder="请输入岗位编码"
             @keyup.enter.native="handleQuery"
+            class="search-item"
         />
       </el-form-item>
       <el-form-item label="岗位名称" prop="postName">
@@ -15,10 +16,11 @@
             clearable
             placeholder="请输入岗位名称"
             @keyup.enter.native="handleQuery"
+            class="search-item"
         />
       </el-form-item>
       <el-form-item label="状态" prop="status">
-        <el-select v-model="queryParams.status" :clearable="true" placeholder="岗位状态">
+        <el-select v-model="queryParams.status" :clearable="true" class="search-item" placeholder="岗位状态">
           <el-option v-for="(item,key) in jobStatus" :key="key" :label="item.label" :value="key"/>
         </el-select>
       </el-form-item>
@@ -254,7 +256,8 @@ function handleCancel() {
 // 表单重置
 function reset() {
   form.value = {
-    status: '0'
+    status: '0',
+    postSort: 1
   };
   // this.resetForm("form");
 }

@@ -4,14 +4,14 @@
       <el-form-item label="部门名称" prop="menuName">
         <el-input
             v-model="queryParams.deptName"
-            class="form-item"
+            class="search-item"
             clearable
             placeholder="请输入部门名称"
             @keyup.enter.native="handleQuery"
         />
       </el-form-item>
       <el-form-item label="状态" prop="status">
-        <el-select v-model="queryParams.status" :clearable="true" class="form-item" placeholder="部门状态">
+        <el-select v-model="queryParams.status" :clearable="true" class="search-item" placeholder="部门状态">
           <el-option v-for="(item,key) in deptStatus" :key="key" :label="item.label" :value="key"/>
         </el-select>
       </el-form-item>
@@ -309,7 +309,10 @@ function getTreeSelect() {
 
 // 表单重置
 function reset() {
-  form.value = {}
+  form.value = {
+    status: '0',
+    orderNum: 1
+  }
   // this.resetForm("form");
 }
 

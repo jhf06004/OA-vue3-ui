@@ -7,11 +7,11 @@
             placeholder="请输入菜单名称"
             clearable
             @keyup.enter.native="handleQuery"
-            class="form-item"
+            class="search-item"
         />
       </el-form-item>
       <el-form-item label="菜单状态" prop="status">
-        <el-select v-model="queryParams.status" :clearable="true" class="form-item" placeholder="菜单状态">
+        <el-select v-model="queryParams.status" :clearable="true" class="search-item" placeholder="菜单状态">
           <el-option v-for="(item,key) in menuStatus" :key="key" :label="item.label" :value="key"/>
         </el-select>
       </el-form-item>
