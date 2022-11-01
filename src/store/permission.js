@@ -4,7 +4,7 @@ import {getRouters} from "@/api/menu.js";
 import auth from "@/plugins/auth.js";
 import ParentView from '@/components/ParentView/index.vue'
 import Layout from '@/layout/index.vue'
-import {useRouter} from "vue-router";
+import {defineAsyncComponent} from "vue";
 
 export const usePermissionStore = defineStore({
   id: 'permissionStore',
@@ -58,8 +58,10 @@ export const usePermissionStore = defineStore({
           this.routes = constantRoutes.concat(rewriteRoutes)
           this.sidebarRouters = constantRoutes.concat(sidebarRoutes)
           this.defaultRoutes = sidebarRoutes
-          console.log('sidebarRoutes', sidebarRoutes)
           this.topBarRouters = sidebarRoutes
+
+          console.log('sidebarRoutes', sidebarRoutes)
+          console.log('constantRoutes', constantRoutes)
           resolve(rewriteRoutes)
         })
       })
@@ -83,7 +85,7 @@ function filterAsyncRouter(asyncRouterMap, lastRouter = false, type = false) {
       } else if (route.component === 'ParentView') {
         route.component = ParentView
       } else if (route.component === 'InnerLink') {
-        // iframe内嵌页面暂未开发
+        // TODO--iframe内嵌页面暂未开发
         // route.component = InnerLink
       } else {
         route.component = loadView(route.component)
@@ -140,11 +142,39 @@ export function filterDynamicRoutes(routes) {
   return res
 }
 
+const time = (t, callback = () => {
+}) => {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      callback()
+      resolve()
+    }, t)
+  })
+}
 export const loadView = (view) => {
+  /*----*/
+  // if (process.env.NODE_ENV === 'development') {
+  //   return (resolve) => require([`@/views/${view}`], resolve)
+  // } else {
+  //   // 使用 import 实现生产环境的路由懒加载
+  //   return () => import(`@/views/${view}`)
+  // }
+  /* 路由懒加载 */
   if (process.env.NODE_ENV === 'development') {
-    return (resolve) => require([`@/views/${view}`], resolve)
+    return new Promise((resolve, reject) => {
+      (async function () {
+        try {
+          await time(2000) // 延迟加载时间
+          let modules = import.meta.glob('../views/**/*.vue')
+          const res = await modules[`../views/${view}.vue`]
+          resolve(res)
+        } catch (error) {
+          reject(error)
+        }
+      })()
+    })
   } else {
     // 使用 import 实现生产环境的路由懒加载
-    return () => import(`@/views/${view}`)
+    return () => defineAsyncComponent(() => import(`@/views/${view}.vue`))
   }
 }
