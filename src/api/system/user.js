@@ -13,11 +13,11 @@ export function getUserInfo(query) {
 }
 
 // 查询用户列表
-export function listUser(query) {
+export function listUser(data) {
   return request({
     url: '/system/user/list',
-    method: 'get',
-    params: query
+    method: 'post',
+    data
   })
 }
 

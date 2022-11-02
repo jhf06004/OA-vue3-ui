@@ -57,11 +57,12 @@ export const usePermissionStore = defineStore({
           this.addRoutes = rewriteRoutes
           this.routes = constantRoutes.concat(rewriteRoutes)
           this.sidebarRouters = constantRoutes.concat(sidebarRoutes)
+          // TODO--待优化
+          this.sidebarRouters.forEach(item => {
+            router.addRoute(item)
+          })
           this.defaultRoutes = sidebarRoutes
           this.topBarRouters = sidebarRoutes
-
-          console.log('sidebarRoutes', sidebarRoutes)
-          console.log('constantRoutes', constantRoutes)
           resolve(rewriteRoutes)
         })
       })
@@ -71,6 +72,21 @@ export const usePermissionStore = defineStore({
     }
   }
 })
+
+// 递归添加层级路由
+function addRouterItem(routerData) {
+  console.log('routerData', routerData)
+  if (routerData && routerData.length) {
+    routerData.forEach(item => {
+      if (item.children && item.children.length) {
+        addRouterItem(item.children)
+      } else {
+        item.path = '/' + item.path
+        router.addRoute(item)
+      }
+    })
+  }
+}
 
 // 遍历后台传来的路由字符串，转换为组件对象
 function filterAsyncRouter(asyncRouterMap, lastRouter = false, type = false) {
@@ -159,20 +175,22 @@ export const loadView = (view) => {
   //   // 使用 import 实现生产环境的路由懒加载
   //   return () => import(`@/views/${view}`)
   // }
-  /* 路由懒加载 */
+  /* 路由导出 */
   if (process.env.NODE_ENV === 'development') {
-    return new Promise((resolve, reject) => {
-      (async function () {
-        try {
-          await time(2000) // 延迟加载时间
-          let modules = import.meta.glob('../views/**/*.vue')
-          const res = await modules[`../views/${view}.vue`]
-          resolve(res)
-        } catch (error) {
-          reject(error)
-        }
-      })()
-    })
+    let modules = import.meta.glob('../views/**/*.vue')
+    return modules[`../views/${view}.vue`]
+    // return new Promise((resolve, reject) => {
+    //   (async function () {
+    //     try {
+    //       await time(2000) // 延迟加载时间
+    //       let modules = import.meta.glob('../views/**/*.vue')
+    //       const res = await modules[`../views/${view}.vue`]
+    //       resolve(res)
+    //     } catch (error) {
+    //       reject(error)
+    //     }
+    //   })()
+    // })
   } else {
     // 使用 import 实现生产环境的路由懒加载
     return () => defineAsyncComponent(() => import(`@/views/${view}.vue`))

@@ -24,7 +24,7 @@
 
 <script setup>
 import {computed, ref} from 'vue'
-import {useRoute} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 import {storeToRefs} from "pinia";
 import {usePermissionStore} from "@/store/permission.js";
 import SidebarItem from "@/layout/components/sidebar/SidebarItem.vue";
@@ -32,15 +32,14 @@ import {useAppStore} from "@/store/app.js";
 import CollapseIcon from "@/layout/components/sidebar/CollapseIcon.vue";
 
 const route = useRoute()
-
+const router = useRouter()
 // menu组件默认跳转的路径
 const activeMenu = computed(() => {
   const {path, meta} = route
   if (meta && meta.activeMenu) {
     return meta.activeMenu
   }
-
-  return path.replace(/^\//g, '')
+  return path
 })
 // 状态管理中的路由
 const userRouterStore = usePermissionStore()
@@ -49,7 +48,6 @@ const routes = computed(() => {
   // 获取子集目录
   return currentRoutes.value
 })
-
 // 获取和设置全局状态中的侧边栏状态
 const appStore = useAppStore()
 const hiddenSidebar = computed(() => {

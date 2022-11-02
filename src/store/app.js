@@ -5,6 +5,7 @@ export const useAppStore = defineStore("app", {
   state: () => ({
     sidebar: {
       collapseStatus: Cookies.set('sidebarStatus') === 'true',
+      // 侧边栏是否隐藏
       hidden: false
     },
     device: 'desktop'

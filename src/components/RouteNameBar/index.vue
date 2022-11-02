@@ -6,7 +6,6 @@
 import {useRouter} from 'vue-router';
 
 const router = useRouter()
-console.log('router', router);
 </script>
 
 <style scoped>
