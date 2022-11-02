@@ -1,13 +1,13 @@
 import request from '@/utils/request'
 // 登录方法
-export function login(username, password) {
+export function login(phonenumber, password) {
   return request({
     url: '/auth/login',
     headers: {
       isToken: false
     },
     method: 'post',
-    data: { username, password }
+    data: {phonenumber, password}
   })
 }
 

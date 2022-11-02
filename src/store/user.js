@@ -40,11 +40,11 @@ export const useUserStore = defineStore({
         // 用户登录
         login({userInfo, keyPair}) {
             return new Promise((resolve, reject) => {
-                const username = userInfo.username.trim()
+                const phonenumber = userInfo.phonenumber.trim()
                 const password = encrypt(userInfo.password, keyPair)
                 const code = userInfo.code
                 const uuid = userInfo.uuid
-                login(username, password).then(res => {
+                login(phonenumber, password).then(res => {
                     const data = res.data
                     setToken(data.access_token)
                     // token信息

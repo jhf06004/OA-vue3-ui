@@ -17,12 +17,12 @@
                 auto-complete="on"
                 label-position="left"
             >
-              <el-form-item prop="username">
+              <el-form-item prop="phonenumber">
                 <el-input
-                    ref="username"
-                    v-model="loginData.loginForm.username"
+                    ref="phonenumber"
+                    v-model="loginData.loginForm.phonenumber"
                     placeholder="输入用户名"
-                    name="username"
+                    name="phonenumber"
                     type="text"
                     tabindex="1"
                     auto-complete="on"
@@ -46,7 +46,7 @@
                 </span>
               </el-form-item>
               <!--              -->
-              <div v-if="loginData.loginForm.password!==''&& loginData.loginForm.username!==''"
+              <div v-if="loginData.loginForm.password!==''&& loginData.loginForm.phonenumber!==''"
                    style="margin-top: 60px">
                 <el-button
                     :loading="loginData.loading"
@@ -98,11 +98,11 @@ const validatePassword = (rule, value, callback) => {
 // data数据
 const loginData = reactive({
   loginForm: {
-    username: 'admin',
+    phonenumber: '13048996241',
     password: 'admin123'
   },
   loginRules: {
-    username: [{required: true, trigger: 'blur', validator: validateUsername}],
+    phonenumber: [{required: true, trigger: 'blur', validator: validateUsername}],
     password: [{required: true, trigger: 'blur', validator: validatePassword}]
   },
   loading: false,
