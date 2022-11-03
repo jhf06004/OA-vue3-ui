@@ -159,9 +159,8 @@
 
 <script setup>
 import {onMounted, reactive, ref} from "vue";
-import {delMenu, listMenu} from "@/api/system/menu.js";
 import {SortDown, SortUp, Search, Refresh, Delete, Edit, Plus, Sort, QuestionFilled} from '@element-plus/icons-vue'
-import {handleTree} from "@/utils/gitone.js";
+import {handleTree} from "@/utils/index.js";
 import {ElMessage, ElMessageBox} from "element-plus";
 import {delDept, getDept, listDept, saveDept} from "@/api/system/dept.js";
 // 查修参数

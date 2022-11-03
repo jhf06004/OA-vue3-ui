@@ -281,7 +281,7 @@ import {onMounted, reactive, ref} from "vue";
 import {listMenu} from "@/api/system/menu.js";
 import {SortDown, SortUp, Search, Refresh, Delete, Edit, Plus, Sort, QuestionFilled} from '@element-plus/icons-vue'
 import iconList from "@/components/IconSelect/requireIcons.js"
-import {handleTree} from "@/utils/gitone.js";
+import {handleTree} from "@/utils/index.js";
 import {getMenu, saveMenu, delMenu} from "@/api/system/menu.js";
 import {ElMessage, ElMessageBox} from "element-plus";
 // 查修参数
