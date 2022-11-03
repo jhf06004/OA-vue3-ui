@@ -108,7 +108,21 @@ const router = createRouter({
     history: createWebHistory(),
     routes: constantRoutes
 })
-export const dynamicRoutes = []
+export const dynamicRoutes = [
+    // {
+    //     path: '/system/dict-data',
+    //     component: Layout,
+    //     hidden: true,
+    //     children: [
+    //         {
+    //             path: 'index/:dictId',
+    //             component: () => import('@/views/systemMgmt/dictMgmt/dictData.vue'),
+    //             name: 'dictData',
+    //             meta: {title: '字典数据', activeMenu: '/system/dict'}
+    //         }
+    //     ]
+    // },
+]
 
 
 // reset router
