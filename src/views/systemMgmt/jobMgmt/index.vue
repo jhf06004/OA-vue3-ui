@@ -1,7 +1,7 @@
 <template>
   <div class="page-container">
     <el-form ref="queryForm" :inline="true" :model="queryParams">
-      <el-form-item label="岗位编码" prop="postCode">
+      <el-form-item label="岗位编码">
         <el-input
             v-model="queryParams.postCode"
             clearable
@@ -10,7 +10,7 @@
             class="search-item"
         />
       </el-form-item>
-      <el-form-item label="岗位名称" prop="postName">
+      <el-form-item label="岗位名称">
         <el-input
             v-model="queryParams.postName"
             clearable

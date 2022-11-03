@@ -88,6 +88,12 @@ export const constantRoutes = [
     //         }
     //     ]
     // },
+    // {
+    //     path: '/system/dict-data',
+    //     name: 'DictData',
+    //     component: () => import('@/views/systemMgmt/dictMgmt/dictData.vue'),
+    //     meta: {title: '字典数据', icon: '',hidden: true},
+    // },
     {
         path: '/404',
         name: 'PageNotExist',

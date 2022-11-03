@@ -13,7 +13,7 @@
         <div class="line"></div>
         <div class="right-info">
           <el-form ref="queryForm" :inline="true" :model="queryParams">
-            <el-form-item label="姓名" prop="nickName">
+            <el-form-item label="姓名">
               <el-input
                   v-model="queryParams.nickName"
                   class="search-item"
@@ -22,7 +22,7 @@
                   @keyup.enter.native="handleQuery"
               />
             </el-form-item>
-            <el-form-item label="手机号" prop="phonenumber">
+            <el-form-item label="手机号">
               <el-input
                   v-model="queryParams.phonenumber"
                   class="search-item"
