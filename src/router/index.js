@@ -92,14 +92,12 @@ export const constantRoutes = [
         path: '/404',
         name: 'PageNotExist',
         component: () => import('@/views/404.vue'),
-    },
+    }
     // {
     //     path: "/:catchAll(.*)", // 不识别的path自动匹配404
     //     redirect: '/404',
     // },
 ]
-// 动态路由，基于用户权限动态去加载
-// getRouters()
 const router = createRouter({
     history: createWebHistory(),
     routes: constantRoutes
