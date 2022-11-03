@@ -52,9 +52,14 @@ export function refreshCache() {
 }
 
 // 获取字典选择框列表
-export function optionselect() {
+export function optionSelect() {
   return request({
-    url: '/system/dict/type/optionselect',
+    url: '/system/dict/type/optionSelect',
     method: 'get'
   })
+}
+
+// 导出字段类型数据接口
+export function exportDictType() {
+  return 'system/dict/type/export'
 }

@@ -2,17 +2,11 @@ import axios from 'axios'
 import {ElMessage, ElMessageBox} from 'element-plus'
 import {useUserStore} from '@/store/user.js'
 import {getToken} from '@/utils/auth'
+import errorCode from "@/utils/errorCode.js";
 // 是否显示重新登录
 export let isResetLogin = {
     show: false
 };
-
-const errorCode = {
-    '401': '认证失败，无法访问系统资源',
-    '403': '当前操作没有权限',
-    '404': '访问资源不存在',
-    'default': '系统未知错误，请反馈给管理员'
-}
 
 let store = null
 export const BASE_URL = import.meta.env.VITE_BASE_API

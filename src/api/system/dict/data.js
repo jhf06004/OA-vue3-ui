@@ -58,3 +58,8 @@ export function delData(dictCode) {
     method: 'delete'
   })
 }
+
+// 导出字段类型数据接口
+export function exportDictData() {
+  return 'system/dict/data/export'
+}
