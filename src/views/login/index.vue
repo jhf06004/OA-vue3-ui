@@ -138,7 +138,6 @@ function showPwd() {
 // 获取密钥
 function getKeyPair() {
   getPublicKey().then(res => {
-    console.log(res)
     loginData.keyPair = res;
   })
 }

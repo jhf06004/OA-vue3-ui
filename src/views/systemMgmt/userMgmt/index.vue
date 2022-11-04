@@ -5,7 +5,7 @@
         <div class="left-tree">
           <div>
             <el-input v-model="filterText" clearable placeholder="请输入部门名称关键字"/>
-            <el-tree ref="deptTreeRef" :data="deptTreeInfo.DeptData" :filter-node-method="filterNode"
+            <el-tree ref="deptTreeRef" :data="selectFromInfo.DeptData" :filter-node-method="filterNode"
                      :props="defaultProps"
                      @node-click="handleDeptNodeClick"/>
           </div>
@@ -51,6 +51,62 @@
               <el-button :icon="Refresh" @click="resetQuery">重置</el-button>
             </el-form-item>
           </el-form>
+          <el-row :gutter="10" class="btn-line">
+            <el-col :span="1.5">
+              <el-button
+                  :icon="Plus"
+                  plain
+                  type="primary"
+                  @click="handleAdd"
+              >新增
+              </el-button>
+            </el-col>
+            <el-col :span="1.5">
+              <el-button
+                  :icon="Delete"
+                  plain
+                  type="danger"
+                  @click=""
+              >删除
+              </el-button>
+            </el-col>
+            <el-col :span="1.5">
+              <el-button
+                  :icon="Download"
+                  plain
+                  type="warning"
+                  @click=""
+              >导出
+              </el-button>
+            </el-col>
+            <el-col :span="1.5">
+              <el-button
+                  :icon="Upload"
+                  plain
+                  type="success"
+                  @click=""
+              >导入
+              </el-button>
+            </el-col>
+            <el-col :span="1.5">
+              <el-button
+                  :icon="Refresh"
+                  plain
+                  type="primary"
+                  @click=""
+              >重置密码
+              </el-button>
+            </el-col>
+            <el-col :span="1.5">
+              <el-button
+                  :icon="Notification"
+                  plain
+                  type="primary"
+                  @click=""
+              >分配角色
+              </el-button>
+            </el-col>
+          </el-row>
           <vxe-table
               ref="userTableRef"
               :data="tableInfo.userList"
@@ -111,166 +167,102 @@
       </div>
     </div>
     <div>
-      <el-dialog v-model="formInfo.formVisible" :title="formInfo.formTitle" append-to-body draggable width="780px">
-        <el-form ref="menuFormRef" :model="form" :rules="formInfo.rules" style="padding: 0 40px">
-          <el-row>
-            <el-col :span="24">
-              <el-form-item label="上级菜单">
-                <el-tree-select
-                    v-model="form.parentId"
-                    :check-strictly="true"
-                    :data="menuOptions"
-                    :render-after-expand="false"
-                ></el-tree-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="24">
-              <el-form-item label="菜单类型" prop="menuType">
-                <el-radio-group v-model="form.menuType">
-                  <el-radio label="M">目录</el-radio>
-                  <el-radio label="C">菜单</el-radio>
-                  <el-radio label="F">按钮</el-radio>
-                </el-radio-group>
-              </el-form-item>
-            </el-col>
-            <el-col v-if="form.menuType !== 'F'" :span="24">
-              <el-form-item label="菜单图标" prop="icon">
-                <el-select v-model="form.icon" class="form-item" placeholder="请选择图标">
-                  <el-option
-                      v-for="(item,index) in iconList"
-                      :key="index"
-                      :label="item"
-                      :value="item"
-                  >
-                    <div style="display: flex;align-items: center">
-                      <svg-icon :icon-class="item" style="height: 32px;width: 16px;margin-right: 10px"></svg-icon>
-                      <span>{{ item }}</span>
-                    </div>
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="菜单名称" prop="menuName">
-                <el-input v-model="form.menuName" placeholder="请输入菜单名称" style="width: 220px"/>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="显示排序" prop="orderNum">
-                <el-input-number v-model="form.orderNum" :min="0" class="form-item" controls-position="right"/>
-              </el-form-item>
-            </el-col>
-            <el-col v-if="form.menuType !== 'F'" :span="12">
-              <el-form-item>
-              <span slot="label" class="form-item-label">
-                <el-tooltip content="选择是外链则路由地址需要以`http(s)://`开头" placement="top">
-                  <el-icon><QuestionFilled/></el-icon>
-                </el-tooltip>
-                是否外链
-              </span>
-                <el-radio-group v-model="form.isFrame">
-                  <el-radio disabled label="0">是</el-radio>
-                  <el-radio label="1">否</el-radio>
-                </el-radio-group>
-              </el-form-item>
-            </el-col>
-            <el-col v-if="form.menuType !== 'F'" :span="12">
-              <el-form-item prop="path">
-              <span slot="label" class="form-item-label">
-                <el-tooltip content="访问的路由地址，如：`user`，如外网地址需内链访问则以`http(s)://`开头" placement="top">
-                <el-icon><QuestionFilled/></el-icon>
-                </el-tooltip>
-                路由地址
-              </span>
-                <el-input v-model="form.path" class="form-item" placeholder="请输入路由地址"/>
-              </el-form-item>
-            </el-col>
-            <el-col v-if="form.menuType === 'C'" :span="12">
-              <el-form-item prop="component">
-              <span slot="label" class="form-item-label">
-                <el-tooltip content="访问的组件路径，如：`system/user/index`，默认在`views`目录下" placement="top">
-                <el-icon><QuestionFilled/></el-icon>
-                </el-tooltip>
-                组件路径
-              </span>
-                <el-input v-model="form.component" class="form-item" placeholder="请输入组件路径"/>
-              </el-form-item>
-            </el-col>
-            <el-col v-if="form.menuType !== 'M'" :span="12">
-              <el-form-item>
-              <span slot="label" class="form-item-label">
-                <el-tooltip content="控制器中定义的权限字符，如：@PreAuthorize(`@ss.hasPermi('system:user:list')`)"
-                            placement="top">
-                <el-icon><QuestionFilled/></el-icon>
-                </el-tooltip>
-                权限字符
-              </span>
-                <el-input v-model="form.perms" class="form-item" maxlength="100" placeholder="请输入权限标识"/>
-              </el-form-item>
-            </el-col>
-            <el-col v-if="form.menuType === 'C'" :span="12">
-              <el-form-item>
-              <span slot="label" class="form-item-label">
-                <el-tooltip content='访问路由的默认传递参数，如：`{"id": 1, "name": "ry"}`' placement="top">
-                <el-icon><QuestionFilled/></el-icon>
-                </el-tooltip>
-                路由参数
-              </span>
-                <el-input v-model="form.query" class="form-item" maxlength="255" placeholder="请输入路由参数"/>
-              </el-form-item>
-            </el-col>
-            <el-col v-if="form.menuType === 'C'" :span="12">
-              <el-form-item>
-              <span slot="label" class="form-item-label">
-                <el-tooltip content="选择是则会被`keep-alive`缓存，需要匹配组件的`name`和地址保持一致" placement="top">
-                <el-icon><QuestionFilled/></el-icon>
-                </el-tooltip>
-                是否缓存
-              </span>
-                <el-radio-group v-model="form.isCache">
-                  <el-radio label="0">缓存</el-radio>
-                  <el-radio label="1">不缓存</el-radio>
-                </el-radio-group>
-              </el-form-item>
-            </el-col>
-            <el-col v-if="form.menuType !== 'F'" :span="12">
-              <el-form-item>
-              <span slot="label" class="form-item-label">
-                <el-tooltip content="选择隐藏则路由将不会出现在侧边栏，但仍然可以访问" placement="top">
-                <el-icon><QuestionFilled/></el-icon>
-                </el-tooltip>
-                显示状态
-              </span>
-                <el-radio-group v-model="form.visible">
-                  <!--                <el-radio-->
-                  <!--                    v-for="dict in dict.type.sys_show_hide"-->
-                  <!--                    :key="dict.value"-->
-                  <!--                    :label="dict.value"-->
-                  <!--                >{{dict.label}}</el-radio>-->
-                  <el-radio v-for="(item,key) in menuVisible" :key="key" :label="key">{{ item.label }}</el-radio>
-                </el-radio-group>
-              </el-form-item>
-            </el-col>
-            <el-col v-if="form.menuType !== 'F'" :span="12">
-              <el-form-item>
-              <span slot="label" class="form-item-label">
-                <el-tooltip content="选择停用则路由将不会出现在侧边栏，也不能被访问" placement="top">
-                <el-icon><QuestionFilled/></el-icon>
-                </el-tooltip>
-                菜单状态
-              </span>
-                <el-radio-group v-model="form.status">
-                  <!--                <el-radio-->
-                  <!--                    v-for="dict in dict.type.sys_normal_disable"-->
-                  <!--                    :key="dict.value"-->
-                  <!--                    :label="dict.value"-->
-                  <!--                >{{dict.label}}</el-radio>-->
-                  <el-radio v-for="(item,key) in menuStatus" :key="key" :label="key">{{ item.label }}</el-radio>
-                </el-radio-group>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </el-form>
+      <el-dialog v-model="formInfo.formVisible" :title="formInfo.formTitle" append-to-body class="user-dialog"
+                 draggable width="780px">
+        <el-collapse v-model="foldList" accordion>
+          <el-collapse-item :name="1">
+            <template #title>
+              <el-icon :size="18">
+                <Document/>
+              </el-icon>
+              <span style="font-size: 16px;margin-left: 10px">用户基本信息</span>
+            </template>
+            <el-form ref="userFormRef" :model="form" :rules="formInfo.rules" style="padding: 10px 40px 0">
+              <el-row>
+                <el-col :span="12">
+                  <el-form-item label="姓名" prop="userName">
+                    <el-input v-model="form.userName" placeholder="请输入姓名" style="width: 220px"/>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                  <el-form-item label="状态" prop="empType">
+                    <el-radio-group v-model="form.status">
+                      <el-radio v-for="(item,key) in userStatus" :key="key" :label="key">{{ item.label }}</el-radio>
+                    </el-radio-group>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                  <el-form-item label="员工类型" prop="empType">
+                    <el-radio-group v-model="form.empType">
+                      <el-radio v-for="(item,key) in empTypeEnum" :key="key" :label="key">{{ item.label }}</el-radio>
+                    </el-radio-group>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                  <el-form-item label="工号" prop="userNo">
+                    <el-input v-model="form.userNo" placeholder="请输入工号" style="width: 220px"/>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                  <el-form-item label="手机号" prop="phonenumber">
+                    <el-input v-model="form.phonenumber" placeholder="请输入手机号" style="width: 220px"/>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                  <el-form-item label="邮箱" prop="email">
+                    <el-input v-model="form.email" placeholder="请输入邮箱" style="width: 220px"/>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                  <el-form-item label="登录密码" prop="password">
+                    <el-input v-model.trim="form.password" placeholder="请输入登录密码" show-password
+                              style="width: 220px"
+                              type="password"/>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                  <el-form-item label="角色" prop="orderNum">
+                    <el-input-number v-model="form.roleIds" :min="0" class="form-item" controls-position="right"/>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                  <el-form-item label="入职时间" prop="inductionDate">
+                    <el-input v-model="form.inductionDate" class="form-item" placeholder="请输入入职时间"/>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                  <el-form-item label="部门" prop="deptId">
+                    <el-tree-select v-model="form.deptId" :data="selectFromInfo.DeptData" :render-after-expand="false"
+                                    placeholder="请选择部门"/>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                  <el-form-item label="岗位" prop="postId">
+                    <el-select v-model="form.postId" class="form-item" placeholder="请输入岗位">
+                      <el-option
+                          v-for="(item,index) in selectFromInfo.postData"
+                          :key="index"
+                          :label="item.postName"
+                          :value="item.postId"
+                      />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                  <el-form-item label="职级" prop="deptId">
+                    <el-input v-model="form.deptId" class="form-item" placeholder="请输入部门"/>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="24">
+                  <el-form-item label="备注" prop="remark">
+                    <el-input v-model="form.remark" :rows="3" autosize placeholder="请输入备注" style="width: 90%"
+                              type="textarea"/>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </el-form>
+          </el-collapse-item>
+        </el-collapse>
         <div slot="footer" class="dialog-footer">
           <el-button :loading="formInfo.saveLoading" type="primary" @click="handleSubmitForm">确 定</el-button>
           <el-button @click="handleCancel">取 消</el-button>
@@ -281,20 +273,24 @@
 </template>
 
 <script setup>
-import {onMounted, reactive, watch, ref, nextTick} from "vue";
-import {treeSelect} from "@/api/system/dept.js";
-import {Search, Refresh, Delete, Edit, Plus, Sort, QuestionFilled} from '@element-plus/icons-vue'
-import {listUser} from "@/api/system/user.js";
+import {onMounted, reactive, watch, ref} from "vue";
+import {listDept, treeSelect} from "@/api/system/dept.js";
+import {Search, Refresh, Delete, Edit, Plus, Document, Download, Upload, Notification} from '@element-plus/icons-vue'
+import {getUser, listUser} from "@/api/system/user.js";
 import Pagination from "@/components/Pagination/index.vue"
-
+import {handleTree} from "@/utils/index.js";
+import {listPost} from "@/api/system/post.js";
+import {dictRequest} from "@/utils/dict/index.js";
+// 请求字典数据
+dictRequest(['post_level'])
 const defaultProps = {
   children: 'children',
   label: 'label',
 }
-const deptTreeInfo = reactive({
-  DeptData: '',
-  // 选中的部门id
-  checkedDeptId: ''
+// 下拉框中的数据
+const selectFromInfo = reactive({
+  DeptData: [],
+  postData: []
 })
 // 输入框搜索过滤
 const deptTreeRef = ref(null)
@@ -308,9 +304,20 @@ const filterNode = (value, data) => {
 }
 
 /* 获取部门的树形结构 */
-function getDeptTreeData() {
-  treeSelect().then(res => {
-    deptTreeInfo.DeptData = res.data
+function getDeptList() {
+  listDept().then(res => {
+    res.data.forEach(item => {
+      item.value = item.deptId
+      item.label = item.deptName
+    })
+    selectFromInfo.DeptData = handleTree(res.data, "deptId")
+  })
+}
+
+/* 获取岗位下拉数据 */
+function getPostList() {
+  listPost().then(res => {
+    selectFromInfo.postData = res.rows
   })
 }
 
@@ -329,6 +336,10 @@ const userStatus = {
   '1': {label: '停用', type: 'danger'},
   '0': {label: '正常', type: 'success'},
 }
+const empTypeEnum = {
+  '1': {label: '正式员工', type: 'danger'},
+  '2': {label: '实习生', type: 'success'},
+}
 const queryParams = ref({
   pageNum: 1,
   pageSize: 10
@@ -341,19 +352,20 @@ const tableInfo = reactive({
   loading: false
 })
 // 弹窗信息
-const formInfo = {
+const formInfo = reactive({
   formVisible: false,
-  formTitle: '新增',
+  formTitle: '新增用户',
   saveLoading: false,
   rules: {}
-}
-const form = {}
+})
+const form = ref({})
+// 折叠面板--展开值
+const foldList = ref([1, 2])
 
 /* 获取列表数据 */
 function fetchData() {
   tableInfo.loading = true
   listUser(queryParams.value).then(res => {
-    console.log(res)
     tableInfo.userList = res.rows
     tableInfo.total = res.total
   }).finally(() => {
@@ -375,8 +387,31 @@ function resetQuery() {
   handleQuery();
 }
 
+// 表单重置
+function reset() {
+  form.value = {
+    status: '0',
+    empType: '1',
+  };
+  // this.resetForm("form");
+}
+
+/* 新增 */
+function handleAdd() {
+  reset()
+  formInfo.formVisible = true
+  formInfo.formTitle = '添加用户'
+  // console.log('11',dictRequest('post_level'))
+  // getUser().then(res => {
+  //   selectFromInfo.postData = res.posts;
+  //   // this.roleOptions = response.roles;
+  //   // form.value.password = this.initPassword;
+  // });
+}
+
 /* 修改 */
-function handleUpdate(row) {
+function handleUpdate() {
+  reset()
   formInfo.formVisible = true
 }
 
@@ -385,9 +420,20 @@ function handleDelete(row) {
 
 }
 
+/* 保存 */
+function handleSubmitForm() {
+  formInfo.formVisible = false
+}
+
+/* 取消 */
+function handleCancel() {
+  formInfo.formVisible = false
+}
+
 onMounted(() => {
   fetchData()
-  getDeptTreeData()
+  getDeptList()
+  getPostList()
 })
 </script>
 
@@ -423,5 +469,11 @@ $pageContainerPadding: 20px;
 
 :deep(.el-tree) {
   margin-top: 18px;
+}
+
+</style>
+<style lang="scss">
+.user-dialog .el-dialog__body {
+  padding-top: 10px !important;
 }
 </style>

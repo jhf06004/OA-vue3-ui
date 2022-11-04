@@ -25,6 +25,11 @@ export function getDicts(dictType) {
   })
 }
 
+// 根据字典类型查询字典数据信息
+export function getDictApi(dictType) {
+  return '/system/dict/data/type/' + dictType
+}
+
 // 新增字典数据
 export function addData(data) {
   return request({

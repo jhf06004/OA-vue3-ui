@@ -88,7 +88,8 @@
       />
     </div>
     <!-- 添加或修改岗位对话框 -->
-    <el-dialog v-model="formInfo.formVisible" :title="formInfo.formTitle" append-to-body draggable width="480px">
+    <el-dialog v-model="formInfo.formVisible" :title="formInfo.formTitle" append-to-body destroy-on-close draggable
+               width="480px">
       <el-form ref="jobFormRef" :model="form" :rules="formInfo.rules" label-width="100px">
         <el-form-item label="岗位名称" prop="postName">
           <el-input v-model="form.postName" class="form-item" placeholder="请输入岗位名称"/>
@@ -192,7 +193,7 @@ function handleUpdate(row) {
   reset()
   formInfo.formTitle = '修改岗位'
   formInfo.formVisible = true
-  getPost(row.menuId).then(res => {
+  getPost(row.postId).then(res => {
     form.value = res.data
   })
 }
@@ -200,18 +201,13 @@ function handleUpdate(row) {
 /* 添加 */
 function handleAdd(row) {
   reset()
-  if (row != null && row.menuId) {
-    form.value.parentId = row.menuId;
-  } else {
-    form.value.parentId = '0';
-  }
   formInfo.formTitle = '新增岗位'
   formInfo.formVisible = true
 }
 
 /* 删除 */
 function handleDelete(row) {
-  ElMessageBox.confirm('是否确认删除名称为"' + row.postName + '"的岗位', '提示', {type: 'warning',}).then(() => {
+  ElMessageBox.confirm('是否确认要删除该数据？', '提示', {type: 'warning',}).then(() => {
     return delPost(row.postId);
   }).then(() => {
     fetchData()

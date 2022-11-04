@@ -185,7 +185,6 @@ let form = ref({})
 function fetchData() {
   tableInfo.loading = true;
   listType(queryParams.value).then(res => {
-    console.log(res)
     tableInfo.dictList = res.rows
     tableInfo.total = res.total
   }).finally(() => {
