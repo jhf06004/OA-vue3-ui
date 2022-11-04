@@ -280,9 +280,13 @@ import {getUser, listUser} from "@/api/system/user.js";
 import Pagination from "@/components/Pagination/index.vue"
 import {handleTree} from "@/utils/index.js";
 import {listPost} from "@/api/system/post.js";
-import {dictRequest} from "@/utils/dict/index.js";
+import {getDictData} from "@/utils/dict/index.js";
+import {useDictStore} from "@/store/dict.js";
 // 请求字典数据
-dictRequest(['post_level'])
+getDictData(['post_level', 'official_type'])
+const dictStore = useDictStore()
+const dicData = dictStore.getDictData
+console.log(dicData['official_type'])
 const defaultProps = {
   children: 'children',
   label: 'label',
