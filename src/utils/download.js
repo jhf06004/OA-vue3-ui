@@ -42,7 +42,7 @@ export async function blobValidate(data) {
 }
 
 let downloadLoadingInstance;
-
+/* 导出下载excel */
 export function downloadExcel(url, params, filename) {
     downloadLoadingInstance = ElLoading.service({
         text: "正在下载数据，请稍候",

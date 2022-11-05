@@ -8,28 +8,33 @@ export const useDictStore = defineStore("dict", {
         /*
         * 结构： { 字典名称：{字典数据} }
         *  */
-        dictData: {}
+        dictTypeData: {}
     }),
     getters: {
-        getDictData() {
-            return this.dictData
+        getDictTypeData(state) {
+            return state.dictTypeData
         }
     },
     actions: {
-        dictRequest(dictType) {
-            return new Promise((resolve, reject) => {
-                // 判断字典数据中有没有存放，没有则请求
-                if (!this.dictData[dictType]) {
-                    getDicts(dictType).then(res => {
-                        resolve(res)
-                    }).catch((error) => {
-                        reject(error)
+        dictRequest(dictTypeList) {
+            if (Array.isArray(dictTypeList) && dictTypeList.length) {
+                dictTypeList.forEach(item => {
+                    return new Promise((resolve, reject) => {
+                        // 判断字典数据中有没有存放，没有则请求
+                        if (!this.dictData[item]) {
+                            getDicts(item).then(res => {
+                                this.dictData[item] = res.data
+                                resolve(res)
+                            }).catch((error) => {
+                                reject(error)
+                            })
+                        }
                     })
-                }
-            })
+                })
+            }
         },
-        setDictData(dictType, dictTypeData) {
-            this.dictData[dictType] = dictTypeData
+        setDictData(dictType, data) {
+            this.dictTypeData[dictType] = data
         }
     }
 })
