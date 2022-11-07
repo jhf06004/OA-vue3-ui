@@ -1,11 +1,11 @@
 import request from '@/utils/request'
 
 // 查询部门列表
-export function listDept(query) {
+export function listDept(data = {}) {
   return request({
     url: '/system/dept/list',
-    method: 'get',
-    params: query
+    method: 'post',
+    data
   })
 }
 

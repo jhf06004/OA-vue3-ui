@@ -1,6 +1,5 @@
 import request from '@/utils/request'
-// import { parseStrEmpty } from "@/utils/gitone";
-
+import {parseStrEmpty} from "@/utils/index.js";
 
 // 根据ID获取用户信息（无入参返回当前用户信息）
 // 查询用户列表
@@ -24,8 +23,15 @@ export function listUser(data) {
 // 查询用户详细
 export function getUser(userId) {
   return request({
-    // url: '/system/user/' + parseStrEmpty(userId),
-    url: '/system/user/',
+    url: '/system/user/' + parseStrEmpty(userId),
+    method: 'get'
+  })
+}
+
+// 查询用户所有角色
+export function getUserRole() {
+  return request({
+    url: '/system/user/queryUserRole',
     method: 'get'
   })
 }

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div ref="pageContainerRef" class="page-container">
+    <div class="page-container">
       <div class="dept-container">
         <div class="left-tree">
           <div>
@@ -33,12 +33,14 @@
             </el-form-item>
             <el-form-item label="创建时间" prop="menuName">
               <el-date-picker
-                  v-model="queryParams.time"
+                  v-model="searchDate"
                   end-placeholder="结束日期"
                   range-separator="~"
                   start-placeholder="开始日期"
                   style="width: 260px"
                   type="daterange"
+                  value-format="YYYY-MM-DD"
+                  @change="changeDate"
               />
             </el-form-item>
             <el-form-item label="用户状态" prop="status">
@@ -72,20 +74,20 @@
             </el-col>
             <el-col :span="1.5">
               <el-button
-                  :icon="Download"
-                  plain
-                  type="warning"
-                  @click=""
-              >导出
-              </el-button>
-            </el-col>
-            <el-col :span="1.5">
-              <el-button
                   :icon="Upload"
                   plain
                   type="success"
                   @click=""
               >导入
+              </el-button>
+            </el-col>
+            <el-col :span="1.5">
+              <el-button
+                  :icon="Download"
+                  plain
+                  type="warning"
+                  @click=""
+              >导出
               </el-button>
             </el-col>
             <el-col :span="1.5">
@@ -117,7 +119,7 @@
               stripe>
             <vxe-column width="20px"></vxe-column>
             <vxe-column field="nickName" min-width="120" title="姓名"></vxe-column>
-            <vxe-column field="postName" min-width="90" title="工号"></vxe-column>
+            <vxe-column field="userNo" min-width="90" title="工号"></vxe-column>
             <vxe-column field="phonenumber" min-width="120" title="手机号码"></vxe-column>
             <vxe-column field="emil" min-width="90" title="邮箱"></vxe-column>
             <vxe-column field="deptName" min-width="90" title="部门"></vxe-column>
@@ -222,12 +224,25 @@
                 </el-col>
                 <el-col :span="12">
                   <el-form-item label="角色" prop="orderNum">
-                    <el-input-number v-model="form.roleIds" :min="0" class="form-item" controls-position="right"/>
+                    <el-select v-model="form.roleIds" :multiple="true" placeholder="请选择角色">
+                      <el-option
+                          v-for="item in selectFromInfo.roleData"
+                          :key="item.roleId"
+                          :disabled="item.status === 1"
+                          :label="item.roleName"
+                          :value="item.roleId"
+                      ></el-option>
+                    </el-select>
                   </el-form-item>
                 </el-col>
                 <el-col :span="12">
-                  <el-form-item label="入职时间" prop="inductionDate">
-                    <el-input v-model="form.inductionDate" class="form-item" placeholder="请输入入职时间"/>
+                  <el-form-item label="入职日期" prop="inductionDate">
+                    <el-date-picker
+                        v-model="form.inductionDate"
+                        placeholder="请选择入职日期"
+                        type="date"
+                        value-format="YYYY-MM-DD">
+                    </el-date-picker>
                   </el-form-item>
                 </el-col>
                 <el-col :span="12">
@@ -249,8 +264,8 @@
                   </el-form-item>
                 </el-col>
                 <el-col :span="12">
-                  <el-form-item label="职级" prop="deptId">
-                    <el-input v-model="form.deptId" class="form-item" placeholder="请输入部门"/>
+                  <el-form-item label="职级" prop="postLevel">
+                    <DictSelect v-model:dictCode="form.postLevel" dictType="post_level" placeholder="请选择职级"/>
                   </el-form-item>
                 </el-col>
                 <el-col :span="24">
@@ -276,12 +291,12 @@
 import {onMounted, reactive, watch, ref} from "vue";
 import {listDept, treeSelect} from "@/api/system/dept.js";
 import {Search, Refresh, Delete, Edit, Plus, Document, Download, Upload, Notification} from '@element-plus/icons-vue'
-import {getUser, listUser} from "@/api/system/user.js";
+import {getUser, getUserRole, listUser} from "@/api/system/user.js";
 import Pagination from "@/components/Pagination/index.vue"
 import {handleTree} from "@/utils/index.js";
 import {listPost} from "@/api/system/post.js";
-import {useDictStore} from "@/store/dict.js";
-import {getDictData} from "@/utils/dict/index.js";
+import DictSelect from "@/components/DictSelect/index.vue"
+import {listRole} from "@/api/system/role.js";
 // 请求字典数据
 // getDictData(['post_level', 'official_type'])
 
@@ -292,7 +307,8 @@ const defaultProps = {
 // 下拉框中的数据
 const selectFromInfo = reactive({
   DeptData: [],
-  postData: []
+  postData: [],
+  roleData: []
 })
 // 输入框搜索过滤
 const deptTreeRef = ref(null)
@@ -304,15 +320,28 @@ const filterNode = (value, data) => {
   if (!value) return true
   return data.label.includes(value)
 }
+/* 搜索时间控件 */
+/** 日期改变 */
+const searchDate = ref([])
+
+function changeDate() {
+  if (searchDate.value && searchDate.value.length > 1) {
+    queryParams.value.startTime = searchDate.value[0]
+    queryParams.value.endTime = searchDate.value[1]
+  }
+  handleQuery()
+}
 
 /* 获取部门的树形结构 */
 function getDeptList() {
   listDept().then(res => {
-    res.data.forEach(item => {
-      item.value = item.deptId
-      item.label = item.deptName
-    })
-    selectFromInfo.DeptData = handleTree(res.data, "deptId")
+    if (res?.data?.length) {
+      res.data.forEach(item => {
+        item.value = item.deptId
+        item.label = item.deptName
+      })
+      selectFromInfo.DeptData = handleTree(res.data, "deptId")
+    }
   })
 }
 
@@ -320,6 +349,13 @@ function getDeptList() {
 function getPostList() {
   listPost().then(res => {
     selectFromInfo.postData = res.rows
+  })
+}
+
+/* 获取所有角色 */
+function getAllRoleList() {
+  listRole().then(res => {
+    selectFromInfo.roleData = res.rows
   })
 }
 
@@ -358,7 +394,32 @@ const formInfo = reactive({
   formVisible: false,
   formTitle: '新增用户',
   saveLoading: false,
-  rules: {}
+  rules: {
+    userName: [
+      {required: true, message: "用户姓名不能为空", trigger: "blur"}
+    ],
+    empType: [
+      {required: true, message: "员工类型不能为空", trigger: "blur"}
+    ],
+    userNo: [
+      {required: true, message: "工号不能为空", trigger: "blur"}
+    ],
+    phonenumber: [
+      {required: true, message: "手机号码不能为空", trigger: "blur"}
+    ],
+    password: [
+      {required: true, message: "登录密码不能为空", trigger: "blur"}
+    ],
+    inductionDate: [
+      {required: true, message: "入职日期不能为空", trigger: "blur"}
+    ],
+    deptId: [
+      {required: true, message: "部门不能为空", trigger: "blur"}
+    ],
+    postId: [
+      {required: true, message: "岗位不能为空", trigger: "blur"}
+    ],
+  }
 })
 const form = ref({})
 // 折叠面板--展开值
@@ -394,6 +455,7 @@ function reset() {
   form.value = {
     status: '0',
     empType: '1',
+    postLevel: ''
   };
   // this.resetForm("form");
 }
@@ -403,12 +465,6 @@ function handleAdd() {
   reset()
   formInfo.formVisible = true
   formInfo.formTitle = '添加用户'
-  // console.log('11',dictRequest('post_level'))
-  // getUser().then(res => {
-  //   selectFromInfo.postData = res.posts;
-  //   // this.roleOptions = response.roles;
-  //   // form.value.password = this.initPassword;
-  // });
 }
 
 /* 修改 */
@@ -423,8 +479,15 @@ function handleDelete(row) {
 }
 
 /* 保存 */
+const userFormRef = ref(null)
 function handleSubmitForm() {
-  formInfo.formVisible = false
+  console.log('form', form.value)
+  userFormRef.value.validate(valid => {
+    if (valid) {
+      console.log('form', form.value)
+      formInfo.formVisible = false
+    }
+  })
 }
 
 /* 取消 */
@@ -436,9 +499,9 @@ onMounted(async () => {
   fetchData()
   getDeptList()
   getPostList()
-  // await getDictData(['post_level', 'official_type'])
-  const options = await getDictData('post_level')
-  console.log(options)
+  getAllRoleList()
+  // const options = await getDictData('post_level')
+  // console.log(options)
 })
 </script>
 

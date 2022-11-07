@@ -32,6 +32,9 @@ const activeIndex = ref(null)
 // 处理顶部导航栏的路由问题
 function disposeRouter() {
   routes.value = permissionStore.getRoutes.filter((item) => {
+    if (item.hidden) {
+      return false
+    }
     if ((item.children && item.children.length > 0) || item.meta) {
       return item
     }

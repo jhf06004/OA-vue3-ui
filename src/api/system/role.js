@@ -1,11 +1,11 @@
 import request from '@/utils/request'
 
 // 查询角色列表
-export function listRole(query) {
+export function listRole(data) {
   return request({
     url: '/system/role/list',
-    method: 'get',
-    params: query
+    method: 'post',
+    data
   })
 }
 
@@ -17,23 +17,15 @@ export function getRole(roleId) {
   })
 }
 
-// 新增角色
-export function addRole(data) {
+// 保存角色
+export function saveRole(data) {
   return request({
-    url: '/system/role',
+    url: '/system/role/save',
     method: 'post',
-    data: data
+    data
   })
 }
 
-// 修改角色
-export function updateRole(data) {
-  return request({
-    url: '/system/role',
-    method: 'put',
-    data: data
-  })
-}
 
 // 角色数据权限
 export function dataScope(data) {
@@ -117,3 +109,4 @@ export function deptTreeSelect(roleId) {
     method: 'get'
   })
 }
+

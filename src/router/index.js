@@ -21,6 +21,20 @@ export const constantRoutes = [
         name: 'Login',
         component: () => import('@/views/login/index.vue')
     },
+    {
+        path: '/system/role-auth',
+        component: Layout,
+        hidden: true,
+        permissions: [],
+        children: [
+            {
+                path: 'user/:roleId',
+                component: () => import('@/views/systemMgmt/roleMgmt/authUser.vue'),
+                name: 'AuthUser',
+                meta: {title: '分配用户', activeMenu: '/system/role'}
+            }
+        ]
+    },
     // {
     //     path: '/personnel',
     //     component: Layout,
