@@ -50,7 +50,7 @@
       <vxe-column width="20px"></vxe-column>
       <vxe-column field="roleName" min-width="120" title="角色名称"></vxe-column>
       <vxe-column field="roleKey" min-width="120" title="权限字符"></vxe-column>
-      <vxe-column field="roleSort" min-width="30" title="显示顺序"></vxe-column>
+      <vxe-column field="roleSort" min-width="90" title="显示顺序"></vxe-column>
       <vxe-column align="center" min-width="120" title="状态">
         <template #default="{row}">
           <el-switch

@@ -5,7 +5,7 @@
         <div class="left-tree">
           <div>
             <el-input v-model="filterText" clearable placeholder="请输入部门名称关键字"/>
-            <el-tree ref="deptTreeRef" :data="selectFromInfo.DeptData" :filter-node-method="filterNode"
+            <el-tree ref="deptTreeRef" :data="selectFromInfo.deptData" :filter-node-method="filterNode"
                      :props="defaultProps"
                      @node-click="handleDeptNodeClick"/>
           </div>
@@ -168,122 +168,175 @@
         </div>
       </div>
     </div>
-    <div>
-      <el-dialog v-model="formInfo.formVisible" :title="formInfo.formTitle" append-to-body class="user-dialog"
-                 draggable width="780px">
-        <el-collapse v-model="foldList" accordion>
-          <el-collapse-item :name="1">
-            <template #title>
-              <el-icon :size="18">
-                <Document/>
-              </el-icon>
-              <span style="font-size: 16px;margin-left: 10px">用户基本信息</span>
-            </template>
-            <el-form ref="userFormRef" :model="form" :rules="formInfo.rules" style="padding: 10px 40px 0">
-              <el-row>
-                <el-col :span="12">
-                  <el-form-item label="姓名" prop="userName">
-                    <el-input v-model="form.userName" placeholder="请输入姓名" style="width: 220px"/>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="状态" prop="empType">
-                    <el-radio-group v-model="form.status">
-                      <el-radio v-for="(item,key) in userStatus" :key="key" :label="key">{{ item.label }}</el-radio>
-                    </el-radio-group>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="员工类型" prop="empType">
-                    <el-radio-group v-model="form.empType">
-                      <el-radio v-for="(item,key) in empTypeEnum" :key="key" :label="key">{{ item.label }}</el-radio>
-                    </el-radio-group>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="工号" prop="userNo">
-                    <el-input v-model="form.userNo" placeholder="请输入工号" style="width: 220px"/>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="手机号" prop="phonenumber">
-                    <el-input v-model="form.phonenumber" placeholder="请输入手机号" style="width: 220px"/>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="邮箱" prop="email">
-                    <el-input v-model="form.email" placeholder="请输入邮箱" style="width: 220px"/>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="登录密码" prop="password">
-                    <el-input v-model.trim="form.password" placeholder="请输入登录密码" show-password
-                              style="width: 220px"
-                              type="password"/>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="角色" prop="orderNum">
-                    <el-select v-model="form.roleIds" :multiple="true" placeholder="请选择角色">
-                      <el-option
-                          v-for="item in selectFromInfo.roleData"
-                          :key="item.roleId"
-                          :disabled="item.status === 1"
-                          :label="item.roleName"
-                          :value="item.roleId"
-                      ></el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="入职日期" prop="inductionDate">
-                    <el-date-picker
-                        v-model="form.inductionDate"
-                        placeholder="请选择入职日期"
-                        type="date"
-                        value-format="YYYY-MM-DD">
-                    </el-date-picker>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="部门" prop="deptId">
-                    <el-tree-select v-model="form.deptId" :data="selectFromInfo.DeptData" :render-after-expand="false"
-                                    placeholder="请选择部门"/>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="岗位" prop="postId">
-                    <el-select v-model="form.postId" class="form-item" placeholder="请输入岗位">
-                      <el-option
-                          v-for="(item,index) in selectFromInfo.postData"
-                          :key="index"
-                          :label="item.postName"
-                          :value="item.postId"
-                      />
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="职级" prop="postLevel">
-                    <DictSelect v-model:dictCode="form.postLevel" dictType="post_level" placeholder="请选择职级"/>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="24">
-                  <el-form-item label="备注" prop="remark">
-                    <el-input v-model="form.remark" :rows="3" autosize placeholder="请输入备注" style="width: 90%"
-                              type="textarea"/>
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </el-form>
-          </el-collapse-item>
-        </el-collapse>
-        <div slot="footer" class="dialog-footer">
-          <el-button :loading="formInfo.saveLoading" type="primary" @click="handleSubmitForm">确 定</el-button>
-          <el-button @click="handleCancel">取 消</el-button>
-        </div>
-      </el-dialog>
-    </div>
+    <el-dialog v-model="formInfo.formVisible" :title="formInfo.formTitle" append-to-body class="user-dialog"
+               draggable width="780px">
+      <el-collapse v-model="foldList">
+        <!--   用户基本信息填写     -->
+        <el-collapse-item :name="1">
+          <template #title>
+            <el-icon :size="18" style="margin-left: 24px;">
+              <Document/>
+            </el-icon>
+            <span style="font-size: 16px;margin-left: 10px">用户基本信息</span>
+          </template>
+          <el-form ref="userFormRef" :model="form" :rules="formInfo.rules" style="padding: 10px 40px 0">
+            <el-row>
+              <el-col :span="12">
+                <el-form-item label="姓名" prop="userName">
+                  <el-input v-model="form.userName" placeholder="请输入姓名" style="width: 220px"/>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="状态" prop="empType">
+                  <el-radio-group v-model="form.status">
+                    <el-radio v-for="(item,key) in userStatus" :key="key" :label="key">{{ item.label }}</el-radio>
+                  </el-radio-group>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="员工类型" prop="empType">
+                  <el-radio-group v-model="form.empType">
+                    <el-radio v-for="(item,key) in empTypeEnum" :key="key" :label="key">{{ item.label }}</el-radio>
+                  </el-radio-group>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="工号" prop="userNo">
+                  <el-input v-model="form.userNo" placeholder="请输入工号" style="width: 220px"/>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="手机号" prop="phonenumber">
+                  <el-input v-model="form.phonenumber" placeholder="请输入手机号" style="width: 220px"/>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="邮箱" prop="email">
+                  <el-input v-model="form.email" placeholder="请输入邮箱" style="width: 220px"/>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="登录密码" prop="password">
+                  <el-input v-model.trim="form.password" placeholder="请输入登录密码" show-password
+                            style="width: 220px"
+                            type="password"/>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="角色" prop="orderNum">
+                  <el-select v-model="form.roleIds" :multiple="true" placeholder="请选择角色">
+                    <el-option
+                        v-for="item in selectFromInfo.roleData"
+                        :key="item.roleId"
+                        :disabled="item.status === 1"
+                        :label="item.roleName"
+                        :value="item.roleId"
+                    ></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="入职日期" prop="inductionDate">
+                  <el-date-picker
+                      v-model="form.inductionDate"
+                      placeholder="请选择入职日期"
+                      type="date"
+                      value-format="YYYY-MM-DD">
+                  </el-date-picker>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="部门" prop="deptId">
+                  <el-tree-select v-model="form.deptId" :data="selectFromInfo.deptData" :render-after-expand="false"
+                                  placeholder="请选择部门"/>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="岗位" prop="postId">
+                  <el-select v-model="form.postId" class="form-item" placeholder="请输入岗位">
+                    <el-option
+                        v-for="(item,index) in selectFromInfo.postData"
+                        :key="index"
+                        :label="item.postName"
+                        :value="item.postId"
+                    />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="职级" prop="postLevel">
+                  <DictSelect v-model:dictCode="form.postLevel" dictType="post_level" placeholder="请选择职级"/>
+                </el-form-item>
+              </el-col>
+              <el-col :span="24">
+                <el-form-item label="备注" prop="remark">
+                  <el-input v-model="form.remark" :rows="3" autosize placeholder="请输入备注" style="width: 90%"
+                            type="textarea"/>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </el-form>
+        </el-collapse-item>
+        <!--   选择部门和岗位     -->
+        <el-collapse-item :name="2">
+          <template #title>
+            <el-icon :size="18" style="margin-left: 24px;">
+              <Document/>
+            </el-icon>
+            <span style="font-size: 16px;margin-left: 10px">兼任部门岗位</span>
+          </template>
+          <div style="margin-left: 24px">
+            <el-button
+                :icon="Plus"
+                plain
+                style="margin: 0 0 10px 0"
+                type="primary"
+                @click="handleAddPart(-1)"
+            >新增
+            </el-button>
+            <!-- 表头  -->
+            <div class="part-table">
+              <ul class="head-box">
+                <li class="li-column-1" style="width: 60px">序号</li>
+                <li class="li-column-1">兼任部门</li>
+                <li class="li-column-1">兼任岗位</li>
+                <li class="li-column-1">操作</li>
+              </ul>
+              <ul v-for="(item,index) in form.partTimeInfo">
+                <li class="li-column-1" style="width: 60px">序号1</li>
+                <li class="li-column-1">
+                  <el-tree-select v-model="item.deptId" :data="selectFromInfo.deptData" :render-after-expand="false"
+                                  placeholder="请选择部门"/>
+                </li>
+                <li class="li-column-1">
+                  <el-select v-model="item.postId" class="form-item" placeholder="请输入岗位">
+                    <el-option
+                        v-for="(item,index) in selectFromInfo.postData"
+                        :key="index"
+                        :label="item.postName"
+                        :value="item.postId"
+                    />
+                  </el-select>
+                </li>
+                <li class="li-column-1">
+                  <el-button
+                      :icon="Delete"
+                      link
+                      type='primary'
+                      @click="handleDelete(item)"
+                  >删除
+                  </el-button>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </el-collapse-item>
+      </el-collapse>
+      <div slot="footer" class="dialog-footer">
+        <el-button :loading="formInfo.saveLoading" type="primary" @click="handleSubmitForm">确 定</el-button>
+        <el-button @click="handleCancel">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -297,8 +350,6 @@ import {handleTree} from "@/utils/index.js";
 import {listPost} from "@/api/system/post.js";
 import DictSelect from "@/components/DictSelect/index.vue"
 import {listRole} from "@/api/system/role.js";
-// 请求字典数据
-// getDictData(['post_level', 'official_type'])
 
 const defaultProps = {
   children: 'children',
@@ -306,7 +357,7 @@ const defaultProps = {
 }
 // 下拉框中的数据
 const selectFromInfo = reactive({
-  DeptData: [],
+  deptData: [],
   postData: [],
   roleData: []
 })
@@ -340,7 +391,7 @@ function getDeptList() {
         item.value = item.deptId
         item.label = item.deptName
       })
-      selectFromInfo.DeptData = handleTree(res.data, "deptId")
+      selectFromInfo.deptData = handleTree(res.data, "deptId")
     }
   })
 }
@@ -361,9 +412,7 @@ function getAllRoleList() {
 
 /* 左侧树形结构 */
 function handleDeptNodeClick(deptNode) {
-  console.log(deptNode.id)
   queryParams.value.deptId = deptNode.id
-  // filterText.value = deptNode.label
   fetchData()
 }
 
@@ -422,8 +471,19 @@ const formInfo = reactive({
   }
 })
 const form = ref({})
+
+// 表单重置
+function reset() {
+  form.value = {
+    status: '0',
+    empType: '1',
+    postLevel: '',
+    partTimeInfo: []
+  };
+}
+
 // 折叠面板--展开值
-const foldList = ref([1, 2])
+const foldList = ref([1])
 
 /* 获取列表数据 */
 function fetchData() {
@@ -450,15 +510,6 @@ function resetQuery() {
   handleQuery();
 }
 
-// 表单重置
-function reset() {
-  form.value = {
-    status: '0',
-    empType: '1',
-    postLevel: ''
-  };
-  // this.resetForm("form");
-}
 
 /* 新增 */
 function handleAdd() {
@@ -480,6 +531,7 @@ function handleDelete(row) {
 
 /* 保存 */
 const userFormRef = ref(null)
+
 function handleSubmitForm() {
   console.log('form', form.value)
   userFormRef.value.validate(valid => {
@@ -495,13 +547,28 @@ function handleCancel() {
   formInfo.formVisible = false
 }
 
+/* 兼任操作表格 */
+/* 添加兼任 */
+const partTimeInfo = ref([])
+const partTableRef = ref(null)
+const handleAddPart = async (row) => {
+  const $table = partTableRef.value
+  const record = {
+    deptId: '',
+    deptName: '',
+    postId: '',
+    postName: '',
+    ptId: ''
+  }
+  const {row: newRow} = await $table.insertAt(record, row)
+  await $table.setEditCell(newRow, '')
+}
+
 onMounted(async () => {
   fetchData()
   getDeptList()
   getPostList()
   getAllRoleList()
-  // const options = await getDictData('post_level')
-  // console.log(options)
 })
 </script>
 
@@ -543,5 +610,32 @@ $pageContainerPadding: 20px;
 <style lang="scss">
 .user-dialog .el-dialog__body {
   padding-top: 10px !important;
+}
+
+.part-table {
+  ul, li {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .head-box {
+    .li-column-1 {
+      background: #eeeeee;
+      font-weight: bold;
+      font-size: 14px;
+    }
+  }
+
+  .li-column-1 {
+    font-size: 14px;
+    min-width: 160px;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid #eeeeee;
+  }
 }
 </style>

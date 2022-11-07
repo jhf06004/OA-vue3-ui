@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 
 // 查询角色列表
-export function listRole(data) {
+export function listRole(data = {}) {
   return request({
     url: '/system/role/list',
     method: 'post',
