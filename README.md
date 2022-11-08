@@ -27,7 +27,7 @@ https://vxetable.cn/v4
 
 ## 项目说明
 
-oa-vue3-ui
+gitone-oa-ui
 ├─public --公共文件
 ├─languages
 ├─src

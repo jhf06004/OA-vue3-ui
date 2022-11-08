@@ -49,9 +49,10 @@ export default ({
       proxy: {
         // 把key的路径代理到target位置
         ['/api']: { // 需要代理的路径   例如 '/api'
-          target: 'http://192.168.0.236:29000', // 代理到 目标路径
+          // target: 'http://192.168.0.236:29000', // 代理到 目标路径
+          target: 'http://192.168.0.199:8080', // 代理到 目标路径
           changeOrigin: true,
-          rewrite: path => path.replace(/\/api/,'')
+          rewrite: path => path.replace(/\/api/, '')
         }
       },
     },

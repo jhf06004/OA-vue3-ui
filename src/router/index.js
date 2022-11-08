@@ -123,19 +123,20 @@ const router = createRouter({
     routes: constantRoutes
 })
 export const dynamicRoutes = [
-    // {
-    //     path: '/system/dict-data',
-    //     component: Layout,
-    //     hidden: true,
-    //     children: [
-    //         {
-    //             path: 'index/:dictId',
-    //             component: () => import('@/views/systemMgmt/dictMgmt/dictData.vue'),
-    //             name: 'dictData',
-    //             meta: {title: '字典数据', activeMenu: '/system/dict'}
-    //         }
-    //     ]
-    // },
+    {
+        path: '/system/user-auth',
+        component: Layout,
+        hidden: true,
+        permissions: ['system:user:edit'],
+        children: [
+            {
+                path: 'role/:userId',
+                component: () => import('@/views/systemMgmt/userMgmt/authRole.vue'),
+                name: 'AuthRole',
+                meta: {title: '分配角色', activeMenu: '/system/user'}
+            }
+        ]
+    },
 ]
 
 

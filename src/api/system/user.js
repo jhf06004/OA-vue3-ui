@@ -2,12 +2,12 @@ import request from '@/utils/request'
 import {parseStrEmpty} from "@/utils/index.js";
 
 // 根据ID获取用户信息（无入参返回当前用户信息）
-// 查询用户列表
-export function getUserInfo(query) {
+// 获取去用户信息
+export function getUserInfo(params) {
   return request({
     url: '/system/user/queryInfo',
     method: 'get',
-    params: query
+    params
   })
 }
 
@@ -39,26 +39,27 @@ export function getUserRole() {
 // 新增用户
 export function addUser(data) {
   return request({
-    url: '/system/user',
+    url: '/system/user/add',
     method: 'post',
-    data: data
+    data
   })
 }
 
 // 修改用户
 export function updateUser(data) {
   return request({
-    url: '/system/user',
-    method: 'put',
-    data: data
+    url: '/system/user/update',
+    method: 'post',
+    data
   })
 }
 
 // 删除用户
-export function delUser(userId) {
+export function delUser(data) {
   return request({
-    url: '/system/user/' + userId,
-    method: 'delete'
+    url: '/system/user/delete',
+    method: 'post',
+    data
   })
 }
 

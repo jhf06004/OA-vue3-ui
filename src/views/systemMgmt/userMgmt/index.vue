@@ -15,7 +15,7 @@
           <el-form ref="queryForm" :inline="true" :model="queryParams">
             <el-form-item label="姓名">
               <el-input
-                  v-model="queryParams.nickName"
+                  v-model="queryParams.userName"
                   class="search-item"
                   clearable
                   placeholder="请输入姓名"
@@ -69,7 +69,7 @@
                   plain
                   type="danger"
                   @click=""
-              >删除
+              >批量删除
               </el-button>
             </el-col>
             <el-col :span="1.5">
@@ -90,24 +90,6 @@
               >导出
               </el-button>
             </el-col>
-            <el-col :span="1.5">
-              <el-button
-                  :icon="Refresh"
-                  plain
-                  type="primary"
-                  @click=""
-              >重置密码
-              </el-button>
-            </el-col>
-            <el-col :span="1.5">
-              <el-button
-                  :icon="Notification"
-                  plain
-                  type="primary"
-                  @click=""
-              >分配角色
-              </el-button>
-            </el-col>
           </el-row>
           <vxe-table
               ref="userTableRef"
@@ -118,13 +100,13 @@
               resizable
               stripe>
             <vxe-column width="20px"></vxe-column>
-            <vxe-column field="nickName" min-width="120" title="姓名"></vxe-column>
+            <vxe-column field="userName" min-width="120" title="姓名"></vxe-column>
             <vxe-column field="userNo" min-width="90" title="工号"></vxe-column>
             <vxe-column field="phonenumber" min-width="120" title="手机号码"></vxe-column>
             <vxe-column field="emil" min-width="90" title="邮箱"></vxe-column>
             <vxe-column field="deptName" min-width="90" title="部门"></vxe-column>
             <vxe-column field="postName" min-width="90" title="岗位"></vxe-column>
-            <vxe-column field="postName" min-width="90" title="职级"></vxe-column>
+            <vxe-column field="postId" min-width="90" title="职级"></vxe-column>
             <vxe-column field="status" min-width="120" title="状态">
               <template #default="{row}">
                 <el-tag :type="userStatus[row.status].type">
@@ -152,6 +134,22 @@
                     @click="handleDelete(row)"
                 >删除
                 </el-button>
+                <el-dropdown @command="(command) => handleCommand(command, row)">
+                <span class="el-dropdown-link">
+                  <el-button
+                      :icon="DArrowRight"
+                      link
+                      type='primary'
+                  >更多
+                </el-button>
+                </span>
+                  <template #dropdown>
+                    <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item command="handleResetPwd">重置密码</el-dropdown-item>
+                      <el-dropdown-item command="handleAuthRole">分配角色</el-dropdown-item>
+                    </el-dropdown-menu>
+                  </template>
+                </el-dropdown>
               </template>
             </vxe-column>
           </vxe-table>
@@ -179,7 +177,8 @@
             </el-icon>
             <span style="font-size: 16px;margin-left: 10px">用户基本信息</span>
           </template>
-          <el-form ref="userFormRef" :model="form" :rules="formInfo.rules" style="padding: 10px 40px 0">
+          <el-form ref="userFormRef" :model="form" :rules="formInfo.rules" label-width="80px"
+                   style="padding: 10px 40px 0">
             <el-row>
               <el-col :span="12">
                 <el-form-item label="姓名" prop="userName">
@@ -291,7 +290,7 @@
                 plain
                 style="margin: 0 0 10px 0"
                 type="primary"
-                @click="handleAddPart(-1)"
+                @click="handleAddPart()"
             >新增
             </el-button>
             <!-- 表头  -->
@@ -302,8 +301,8 @@
                 <li class="li-column-1">兼任岗位</li>
                 <li class="li-column-1">操作</li>
               </ul>
-              <ul v-for="(item,index) in form.partTimeInfo">
-                <li class="li-column-1" style="width: 60px">序号1</li>
+              <ul v-for="(item,index) in form.partTimeInfo" :key="index">
+                <li class="li-column-1" style="width: 60px">{{ index + 1 }}</li>
                 <li class="li-column-1">
                   <el-tree-select v-model="item.deptId" :data="selectFromInfo.deptData" :render-after-expand="false"
                                   placeholder="请选择部门"/>
@@ -337,19 +336,22 @@
         <el-button @click="handleCancel">取 消</el-button>
       </div>
     </el-dialog>
+
   </div>
 </template>
 
 <script setup>
 import {onMounted, reactive, watch, ref} from "vue";
 import {listDept, treeSelect} from "@/api/system/dept.js";
-import {Search, Refresh, Delete, Edit, Plus, Document, Download, Upload, Notification} from '@element-plus/icons-vue'
-import {getUser, getUserRole, listUser} from "@/api/system/user.js";
+import {Search, Refresh, Delete, Edit, Plus, Document, Download, Upload, DArrowRight} from '@element-plus/icons-vue'
+import {addUser, getUser, getUserInfo, getUserRole, listUser, resetUserPwd, updateUser} from "@/api/system/user.js";
 import Pagination from "@/components/Pagination/index.vue"
 import {handleTree} from "@/utils/index.js";
 import {listPost} from "@/api/system/post.js";
 import DictSelect from "@/components/DictSelect/index.vue"
 import {listRole} from "@/api/system/role.js";
+import {ElMessage, ElMessageBox} from "element-plus";
+import {useRouter} from "vue-router";
 
 const defaultProps = {
   children: 'children',
@@ -376,7 +378,7 @@ const filterNode = (value, data) => {
 const searchDate = ref([])
 
 function changeDate() {
-  if (searchDate.value && searchDate.value.length > 1) {
+  if (searchDate.value?.length > 1) {
     queryParams.value.startTime = searchDate.value[0]
     queryParams.value.endTime = searchDate.value[1]
   }
@@ -519,9 +521,16 @@ function handleAdd() {
 }
 
 /* 修改 */
-function handleUpdate() {
+function handleUpdate(row) {
   reset()
   formInfo.formVisible = true
+  const paramsQuery = {
+    userId: row.userId
+  }
+  // 获取用户信息
+  getUserInfo(paramsQuery).then(res => {
+    form.value = res.data
+  })
 }
 
 /* 删除 */
@@ -529,15 +538,64 @@ function handleDelete(row) {
 
 }
 
+/* 更多操作触发 */
+function handleCommand(command, row) {
+  switch (command) {
+    case "handleResetPwd":
+      handleResetPwd(row);
+      break;
+    case "handleAuthRole":
+      handleAuthRole(row);
+      break;
+    default:
+      break;
+  }
+}
+
+/* 重置密码 */
+function handleResetPwd() {
+  ElMessageBox.prompt('请输入"' + row.userName + '"的新密码', "提示", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    closeOnClickModal: false,
+    inputPattern: /^.{5,20}$/,
+    inputErrorMessage: "用户密码长度必须介于 5 和 20 之间"
+  }).then(({value}) => {
+    resetUserPwd(row.userId, value).then(() => {
+      ElMessage.success(`修改成功，新密码是：${value}`);
+    })
+  }).catch(() => {
+  })
+}
+
+/* 分配角色 */
+const router = useRouter()
+
+function handleAuthRole() {
+  const userId = row.userId
+  router.push("/system/user-auth/role/" + userId);
+}
+
 /* 保存 */
 const userFormRef = ref(null)
 
 function handleSubmitForm() {
-  console.log('form', form.value)
   userFormRef.value.validate(valid => {
     if (valid) {
       console.log('form', form.value)
-      formInfo.formVisible = false
+      if (form.value.userId) {
+        updateUser(form.value).then(() => {
+          ElMessage.success('修改成功')
+          formInfo.formVisible = false
+          fetchData()
+        })
+      } else {
+        addUser(form.value).then(() => {
+          ElMessage.success('新增成功')
+          formInfo.formVisible = false
+          fetchData()
+        })
+      }
     }
   })
 }
@@ -548,22 +606,33 @@ function handleCancel() {
 }
 
 /* 兼任操作表格 */
-/* 添加兼任 */
-const partTimeInfo = ref([])
-const partTableRef = ref(null)
-const handleAddPart = async (row) => {
-  const $table = partTableRef.value
-  const record = {
-    deptId: '',
-    deptName: '',
-    postId: '',
-    postName: '',
-    ptId: ''
+/* 校验是否 */
+function verifyPart() {
+  let pass = true
+  for (let i = 0; i < form.value.partTimeInfo.length; i++) {
+    const partItem = form.value.partTimeInfo[i]
+    if (partItem.deptId === '' && partItem.postId === '') {
+      pass = false
+      ElMessage.warning(`第${i + 1}行有选项未填`)
+      break;
+    }
   }
-  const {row: newRow} = await $table.insertAt(record, row)
-  await $table.setEditCell(newRow, '')
+  return pass
 }
 
+/* 添加兼任 */
+function handleAddPart() {
+  const partItem = Object.assign({}, {
+    deptId: "",
+    deptName: "",
+    postId: "",
+    postName: "",
+    ptId: ""
+  })
+  verifyPart() && form.value.partTimeInfo.push(partItem)
+}
+
+/* 生命周期函数 */
 onMounted(async () => {
   fetchData()
   getDeptList()
@@ -637,5 +706,11 @@ $pageContainerPadding: 20px;
     align-items: center;
     border-bottom: 1px solid #eeeeee;
   }
+}
+
+.el-dropdown-link {
+  cursor: pointer;
+  color: #409EFF;
+  margin: 3.2px 0 0 5px;
 }
 </style>

@@ -36,7 +36,6 @@
           <el-icon :size="10" color="#fff">
             <ArrowDownBold/>
           </el-icon>
-          <i class="el-icon-caret-bottom"/>
         </div>
         <template #dropdown>
           <el-dropdown-menu>
